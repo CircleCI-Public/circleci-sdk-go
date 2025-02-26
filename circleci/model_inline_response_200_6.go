@@ -11,9 +11,9 @@ package circleci
 // Project branches response.
 type InlineResponse2006 struct {
 	// The unique ID of the organization
-	OrgId *Object `json:"org_id"`
+	OrgId *any `json:"org_id"`
 	// The unique ID of the project
-	ProjectId *Object `json:"project_id"`
+	ProjectId *any `json:"project_id"`
 	// A list of all the branches for a given project.
 	Branches []string `json:"branches"`
 }

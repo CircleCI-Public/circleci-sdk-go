@@ -14,5 +14,5 @@ type PipelineContinueBody struct {
 	// A configuration string for the pipeline.
 	Configuration string `json:"configuration"`
 	// An object containing pipeline parameters and their values. Pipeline parameters have the following size limits: 100 max entries, 128 maximum key length, 512 maximum value length.
-	Parameters map[string]Object `json:"parameters,omitempty"`
+	Parameters map[string]any `json:"parameters,omitempty"`
 }

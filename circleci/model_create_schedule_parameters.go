@@ -17,7 +17,7 @@ type CreateScheduleParameters struct {
 	// The attribution-actor of the scheduled pipeline.
 	AttributionActor string `json:"attribution-actor"`
 	// Pipeline parameters represented as key-value pairs. Must contain branch or tag.
-	Parameters map[string]Object `json:"parameters"`
+	Parameters map[string]any `json:"parameters"`
 	// Description of the schedule.
 	Description string `json:"description,omitempty"`
 }

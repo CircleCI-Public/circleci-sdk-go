@@ -10,9 +10,9 @@ package circleci
 
 type PipelineRequest struct {
 	// The unique id for the pipeline definition. This can be found in the page Project Settings > Pipelines.
-	DefinitionId string `json:"definition_id,omitempty"`
-	Config *PipelineRequestConfig `json:"config,omitempty"`
-	Checkout *PipelineRequestCheckout `json:"checkout,omitempty"`
-	// An object containing pipeline parameters and their values. Pipeline parameters have the following size limits: 100 max entries, 128 maximum key length, 512 maximum value length. 
-	Parameters ModelMap `json:"parameters,omitempty"`
+	DefinitionId string                   `json:"definition_id,omitempty"`
+	Config       *PipelineRequestConfig   `json:"config,omitempty"`
+	Checkout     *PipelineRequestCheckout `json:"checkout,omitempty"`
+	// An object containing pipeline parameters and their values. Pipeline parameters have the following size limits: 100 max entries, 128 maximum key length, 512 maximum value length.
+	Parameters any `json:"parameters,omitempty"`
 }

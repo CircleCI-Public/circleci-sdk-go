@@ -15,5 +15,5 @@ type EnvironmentVariable1 struct {
 	// The value of the environment variable.
 	Value string `json:"value"`
 	// The creation timestamp of the environment variable.
-	CreatedAt *Object `json:"created-at,omitempty"`
+	CreatedAt *any `json:"created-at,omitempty"`
 }

@@ -12,8 +12,8 @@ type InlineResponse20012TestRuns struct {
 	// The number of the pipeline associated with the provided test counts
 	PipelineNumber int64 `json:"pipeline_number"`
 	// The ID of the workflow associated with the provided test counts
-	WorkflowId *Object `json:"workflow_id"`
+	WorkflowId *any `json:"workflow_id"`
 	// The success rate calculated from test counts
-	SuccessRate float32 `json:"success_rate"`
-	TestCounts *InlineResponse20012TestCounts `json:"test_counts"`
+	SuccessRate float32                        `json:"success_rate"`
+	TestCounts  *InlineResponse20012TestCounts `json:"test_counts"`
 }

@@ -10,9 +10,9 @@ package circleci
 
 type InlineResponse2003 struct {
 	// The unique ID of the organization
-	OrgId *Object `json:"org_id,omitempty"`
+	OrgId *any `json:"org_id,omitempty"`
 	// The unique ID of the project
-	ProjectId *Object `json:"project_id,omitempty"`
+	ProjectId   *any                           `json:"project_id,omitempty"`
 	ProjectData *InlineResponse2003ProjectData `json:"project_data,omitempty"`
 	// A list of metrics and trends data for workflows for a given project.
 	ProjectWorkflowData []InlineResponse2003ProjectWorkflowData `json:"project_workflow_data,omitempty"`

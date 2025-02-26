@@ -13,7 +13,7 @@ type InlineResponse2007Flakytests struct {
 	// The date and time when workflow was created.
 	WorkflowCreatedAt string `json:"workflow-created-at"`
 	// The ID of the workflow associated with the provided test counts
-	WorkflowId *Object `json:"workflow-id"`
+	WorkflowId *any `json:"workflow-id"`
 	// The class the test belongs to.
 	Classname string `json:"classname"`
 	// The number of the pipeline.
