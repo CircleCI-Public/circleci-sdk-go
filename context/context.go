@@ -1,9 +1,9 @@
 package context
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
@@ -47,11 +47,11 @@ func (s *ContextService) Get(context_id string) (*Context, error) {
 	return &context, nil
 }
 
-func (s *ContextService) List(project_slug string) ([]Context, error) {
+func (s *ContextService) List(organization_slug string) ([]Context, error) {
 	var next_page_token string
 	var context_list []Context
 	for {
-		res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", project_slug, next_page_token), nil)
+		res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", organization_slug, next_page_token), nil)
 		if err != nil {
 			return nil, err
 		}
@@ -70,19 +70,16 @@ func (s *ContextService) List(project_slug string) ([]Context, error) {
 	return context_list, nil
 }
 
-func (s *ContextService) Create(owner_id, owner_type, name string) (*Context, error) {
+func (s *ContextService) Create(organization_id, name string) (*Context, error) {
 	payload := map[string]any{
 		"name": name,
 		"owner": map[string]string{
-			"id":   owner_id,
-			"type": owner_type,
+			"id":   organization_id,
+			"type": "organization",
 		},
 	}
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		return nil, err
-	}
-	res, err := s.client.RequestHelper(http.MethodPost, "/context", bytes.NewBuffer(jsonData))
+	log.Print(payload)
+	res, err := s.client.RequestHelper(http.MethodPost, "/context", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -146,11 +143,7 @@ func (s *ContextService) CreateRestriction(context_id, restriction_value, restri
 		"restriction_value": restriction_value,
 		"restriction_type": restriction_type,
 	}
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		return nil, err
-	}
-	res, err := s.client.RequestHelper(http.MethodPost, "/context/"+context_id+"/restrictions", bytes.NewBuffer(jsonData))
+	res, err := s.client.RequestHelper(http.MethodPost, "/context/"+context_id+"/restrictions", payload)
 	if err != nil {
 		return nil, err
 	}

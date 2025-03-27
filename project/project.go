@@ -66,7 +66,7 @@ func (s *ProjectService) Create(project, organization, provider string) (*Projec
 	return &settings, nil
 }
 
-func (s *ProjectService) GetSettings(project, organization, provider string) (*ProjectSettings, error) {
+func (s *ProjectService) GetSettings(provider, organization, project string) (*ProjectSettings, error) {
 	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/project/%s/%s/%s/settings", provider, organization, project), nil)
 	if err != nil {
 		return nil, err
