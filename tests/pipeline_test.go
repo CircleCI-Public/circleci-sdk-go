@@ -9,7 +9,7 @@ import (
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
 )
 
-func _TestFullPipeline(t *testing.T) {
+func TestFullPipeline(t *testing.T) {
 	token := os.Getenv("LOCAL_CCI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
@@ -41,33 +41,29 @@ func _TestFullPipeline(t *testing.T) {
 		t.FailNow()
 	}
 	id_new_pipeline := pipeline_created.ID
-	// pipeline_to_update := pipeline.Pipeline{
-	// 	Name: "pipeline-updated",
-	// 	Description: "Updated description",
-	// 	ConfigSource: common.ConfigSource{
-	// 		FilePath: ".circleci/config2.yml",
-	// 	},
-	// }
-	// pieline_updated, err := pipelineService.Update(pipeline_to_update, id_new_pipeline)
-	// if err != nil {
-	// 	t.Log(err)
-	// 	t.Error("Error updating pipeline")
-	// 	t.FailNow()
-	// }
-	// if pieline_updated.Description != "Updated description" {
-	// 	t.Error("Pipeline was not updated")
-	// 	t.FailNow()
-	// }
+	pipeline_to_update := pipeline.Pipeline{
+		Name: "pipeline-updated",
+		Description: "Updated description",
+		ConfigSource: common.ConfigSource{
+			FilePath: ".circleci/config2.yml",
+		},
+	}
+	pieline_updated, err := pipelineService.Update(pipeline_to_update, id_new_pipeline)
+	if err != nil {
+		t.Log(err)
+		t.Error("Error updating pipeline")
+		t.FailNow()
+	}
+	if pieline_updated.Description != "Updated description" {
+		t.Error("Pipeline was not updated")
+		t.FailNow()
+	}
 	pipeline_fetched, err := pipelineService.Get(id_new_pipeline)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting pipeline")
 		t.FailNow()
 	}
-	// if pipeline_fetched != pieline_updated {
-	// 	t.Error("Fetched and updated are not equal")
-	// 	t.FailNow()
-	// }
 	err = pipelineService.Delete(id_new_pipeline)
 	if err != nil {
 		t.Log(err)
@@ -77,7 +73,6 @@ func _TestFullPipeline(t *testing.T) {
 	pipeline_fetched, err = pipelineService.Get(id_new_pipeline)
 	t.Log(err)
 	if pipeline_fetched != nil {
-		t.Log(err)
 		t.Error("Pipeline was not deleted")
 		t.FailNow()
 	}

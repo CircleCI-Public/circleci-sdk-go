@@ -85,10 +85,6 @@ func TestFullTrigger(t *testing.T) {
 		t.FailNow()
 	}
 	t.Log(trigger_fetched)
-	// if trigger_fetched != pieline_updated {
-	// 	t.Error("Fetched and updated are not equal")
-	// 	t.FailNow()
-	// }
 	err = triggerService.Delete(id_new_trigger)
 	if err != nil {
 		t.Log(err)
@@ -98,7 +94,6 @@ func TestFullTrigger(t *testing.T) {
 	trigger_fetched, err = triggerService.Get(id_new_trigger)
 	t.Log(err)
 	if trigger_fetched != nil {
-		t.Log(err)
 		t.Error("Trigger was not deleted")
 		t.FailNow()
 	}

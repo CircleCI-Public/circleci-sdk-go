@@ -29,7 +29,7 @@ func TestGetProject(t *testing.T) {
 	}
 }
 
-func _TestGetProjectSettings(t *testing.T) {
+func TestGetProjectSettings(t *testing.T) {
 	token := os.Getenv("LOCAL_CCI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
