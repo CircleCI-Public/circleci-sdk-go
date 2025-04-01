@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetProject(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -30,7 +30,7 @@ func TestGetProject(t *testing.T) {
 }
 
 func TestGetProjectSettings(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}

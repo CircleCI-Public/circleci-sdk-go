@@ -10,7 +10,7 @@ import (
 )
 
 func TestListTrigger(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -31,7 +31,7 @@ func TestListTrigger(t *testing.T) {
 }
 
 func TestFullTrigger(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}

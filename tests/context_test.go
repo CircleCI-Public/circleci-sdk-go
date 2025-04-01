@@ -9,7 +9,7 @@ import (
 )
 
 func TestListContexts(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -27,7 +27,7 @@ func TestListContexts(t *testing.T) {
 }
 
 func TestGetContext(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -49,7 +49,7 @@ func TestGetContext(t *testing.T) {
 }
 
 func TestFullContext(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -83,7 +83,7 @@ func TestFullContext(t *testing.T) {
 }
 
 func TestListRestrictions(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -101,7 +101,7 @@ func TestListRestrictions(t *testing.T) {
 }
 
 func TestFullRestrictions(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
