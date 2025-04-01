@@ -20,4 +20,5 @@ workflows:
   main:
     jobs:
       - build:
+          context: circleci-cli-orb-testing
           filters: *filters
