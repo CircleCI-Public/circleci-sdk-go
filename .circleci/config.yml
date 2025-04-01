@@ -2,7 +2,9 @@ version: 2.1
 
 orbs:
   go: circleci/go@3.0.0
-
+filters: &filters
+  tags:
+    only: /.*/
 jobs:
   build:
     executor:
@@ -17,4 +19,5 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
+      - build:
+          filters: *filters
