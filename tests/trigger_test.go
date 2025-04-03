@@ -18,16 +18,14 @@ func TestListTrigger(t *testing.T) {
 	triggerService := trigger.NewTriggerService(client)
 
 	pipeline_id := "f51dd4e5-11fe-4069-adad-0df0a7493d53"
-	trs, err := triggerService.List(pipeline_id)
+	project_id := "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
+	trs, err := triggerService.List(project_id, pipeline_id)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting triggers")
 		t.FailNow()
 	}
 	t.Log(trs)
-	// if len(trs) != 1 {
-	// 	t.Errorf("Size of triggers is not correct")
-	// }
 }
 
 func TestFullTrigger(t *testing.T) {
@@ -39,6 +37,7 @@ func TestFullTrigger(t *testing.T) {
 	triggerService := trigger.NewTriggerService(client)
 
 	pipeline_id := "f51dd4e5-11fe-4069-adad-0df0a7493d53"
+	project_id := "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
 	new_trigger := trigger.Trigger{
 		Name: "test-trigger",
 		Description: "Test trigger from SDK",
@@ -52,7 +51,7 @@ func TestFullTrigger(t *testing.T) {
 		ConfigRef: "main",
 		CheckoutRef: "main",
 	}
-	trigger_created, err := triggerService.Create(new_trigger, pipeline_id)
+	trigger_created, err := triggerService.Create(new_trigger, project_id, pipeline_id)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating trigger")
@@ -68,7 +67,7 @@ func TestFullTrigger(t *testing.T) {
 		Name: "trigger-updated",
 		Description: "Updated description",
 	}
-	trigger_updated, err := triggerService.Update(trigger_to_update, id_new_trigger)
+	trigger_updated, err := triggerService.Update(trigger_to_update, project_id, id_new_trigger)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error updating trigger")
@@ -78,20 +77,20 @@ func TestFullTrigger(t *testing.T) {
 		t.Error("Trigger was not updated")
 		t.FailNow()
 	}
-	trigger_fetched, err := triggerService.Get(id_new_trigger)
+	trigger_fetched, err := triggerService.Get(project_id, id_new_trigger)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting trigger")
 		t.FailNow()
 	}
 	t.Log(trigger_fetched)
-	err = triggerService.Delete(id_new_trigger)
+	err = triggerService.Delete(project_id,id_new_trigger)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error deleting trigger")
 		t.FailNow()
 	}
-	trigger_fetched, err = triggerService.Get(id_new_trigger)
+	trigger_fetched, err = triggerService.Get(project_id,id_new_trigger)
 	t.Log(err)
 	if trigger_fetched != nil {
 		t.Error("Trigger was not deleted")
