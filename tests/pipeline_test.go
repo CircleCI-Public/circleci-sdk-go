@@ -10,7 +10,7 @@ import (
 )
 
 func TestFullPipeline(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -48,7 +48,7 @@ func TestFullPipeline(t *testing.T) {
 			FilePath: ".circleci/config2.yml",
 		},
 	}
-	pieline_updated, err := pipelineService.Update(pipeline_to_update, id_new_pipeline)
+	pieline_updated, err := pipelineService.Update(pipeline_to_update, project_id, id_new_pipeline)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error updating pipeline")
@@ -58,19 +58,19 @@ func TestFullPipeline(t *testing.T) {
 		t.Error("Pipeline was not updated")
 		t.FailNow()
 	}
-	pipeline_fetched, err := pipelineService.Get(id_new_pipeline)
+	pipeline_fetched, err := pipelineService.Get(project_id, id_new_pipeline)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting pipeline")
 		t.FailNow()
 	}
-	err = pipelineService.Delete(id_new_pipeline)
+	err = pipelineService.Delete(project_id, id_new_pipeline)
 	if err != nil {
 		t.Log(err)
 		t.Error("Error deleting pipeline")
 		t.FailNow()
 	}
-	pipeline_fetched, err = pipelineService.Get(id_new_pipeline)
+	pipeline_fetched, err = pipelineService.Get(project_id, id_new_pipeline)
 	t.Log(err)
 	if pipeline_fetched != nil {
 		t.Error("Pipeline was not deleted")
@@ -79,7 +79,7 @@ func TestFullPipeline(t *testing.T) {
 }
 
 func TestListPipeline(t *testing.T) {
-	token := os.Getenv("LOCAL_CCI_TOKEN")
+	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}

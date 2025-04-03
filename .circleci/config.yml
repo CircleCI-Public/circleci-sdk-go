@@ -1,1 +1,24 @@
 version: 2.1
+
+orbs:
+  go: circleci/go@3.0.0
+filters: &filters
+  tags:
+    only: /.*/
+jobs:
+  build:
+    executor:
+      name: go/default
+      tag: '1.24'
+    steps:
+      - checkout
+      - go/with-cache:
+          steps:
+            - go/test:
+                packages: ./tests/
+workflows:
+  main:
+    jobs:
+      - build:
+          context: circleci-cli-orb-testing
+          filters: *filters
