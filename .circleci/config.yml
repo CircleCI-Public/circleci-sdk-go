@@ -20,5 +20,5 @@ workflows:
   main:
     jobs:
       - build:
-          context: circleci-cli-orb-testing
+          context: CircleCITestOrg-ccipat
           filters: *filters
