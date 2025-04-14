@@ -17,7 +17,7 @@ func TestFullPipeline(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	pipelineService := pipeline.NewPipelineService(client)
 
-	project_id := "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
+	project_id := "eb0da417-4dfc-4d21-8265-490cd658ae40"
 	new_repo := common.Repo{
 		ExternalId: "952038793",
 	}

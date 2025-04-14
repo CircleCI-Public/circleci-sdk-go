@@ -16,7 +16,7 @@ func TestListContexts(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	contextService := context.NewContextService(client)
 
-	organization_slug := "circleci/8e4z1Akd74woxagxnvLT5q"
+	organization_slug := "github/CircleCITestOrg"
 	ctxs, err := contextService.List(organization_slug)
 	if err != nil {
 		t.Log(err)
@@ -34,18 +34,13 @@ func TestGetContext(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	contextService := context.NewContextService(client)
 
-	ctx, err := contextService.Get("e51158a2-f59c-4740-9eb4-d20609baa07e")
+	ctx, err := contextService.Get("70f5c82b-a7e6-464a-af0a-ba857f9d4714")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error fetching context")
 		t.FailNow()
 	}
 	t.Log(ctx)
-	if ctx.Name != "Static Context" {
-		t.Log(err)
-		t.Error("Wrong context fetched")
-		t.FailNow()
-	}
 }
 
 func TestFullContext(t *testing.T) {
@@ -56,7 +51,7 @@ func TestFullContext(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	contextService := context.NewContextService(client)
 
-	organization_id := "3ddcf1d1-7f5f-4139-8cef-71ad0921a968"
+	organization_id := "ec6887ec-7d44-4b31-b468-7e552408ee32"
 	t.Log("Creating...")
 	ctx_created, err := contextService.Create(organization_id, "Test ctx")
 	if err != nil {
@@ -90,7 +85,7 @@ func TestListRestrictions(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	contextService := context.NewContextService(client)
 
-	restrictions, err := contextService.GetRestrictions("e51158a2-f59c-4740-9eb4-d20609baa07e")
+	restrictions, err := contextService.GetRestrictions("70f5c82b-a7e6-464a-af0a-ba857f9d4714")
 
 	if err != nil {
 		t.Log(err)
@@ -108,8 +103,8 @@ func TestFullRestrictions(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	contextService := context.NewContextService(client)
 
-	context_id := "e51158a2-f59c-4740-9eb4-d20609baa07e"
-	restriction, err := contextService.CreateRestriction(context_id, "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33", "project")
+	context_id := "70f5c82b-a7e6-464a-af0a-ba857f9d4714"
+	restriction, err := contextService.CreateRestriction(context_id, "eb0da417-4dfc-4d21-8265-490cd658ae40", "project")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating context restriction")

@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  go: circleci/go@3.0.0
+  go: circleci/go@3.0.2
 filters: &filters
   tags:
     only: /.*/
@@ -16,6 +16,7 @@ jobs:
           steps:
             - go/test:
                 packages: ./tests/
+                verbose: true
 workflows:
   main:
     jobs:

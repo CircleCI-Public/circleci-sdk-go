@@ -16,7 +16,7 @@ func TestListEnvs(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	envService := env.NewEnvService(client)
 
-	envs, err := envService.List("e51158a2-f59c-4740-9eb4-d20609baa07e")
+	envs, err := envService.List("70f5c82b-a7e6-464a-af0a-ba857f9d4714")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting env variables")
@@ -34,14 +34,14 @@ func TestFullEnv(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	envService := env.NewEnvService(client)
 
- 	env_created, err := envService.Create("e51158a2-f59c-4740-9eb4-d20609baa07e", "VALUE", "test_sdk")
+ 	env_created, err := envService.Create("70f5c82b-a7e6-464a-af0a-ba857f9d4714", "VALUE", "test_sdk")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating environment variable")
 		t.FailNow()
 	}
 	t.Log(env_created)
-	err = envService.Delete("e51158a2-f59c-4740-9eb4-d20609baa07e", "test_sdk")
+	err = envService.Delete("70f5c82b-a7e6-464a-af0a-ba857f9d4714", "test_sdk")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error deleting environment variable")

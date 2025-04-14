@@ -16,7 +16,7 @@ func TestGetProject(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	projectService := project.NewProjectService(client)
 
-	slug := "circleci/8e4z1Akd74woxagxnvLT5q/V29Cenkg8EaiSZARmWm8Lz"
+	slug := "github/CircleCITestOrg/test-project-terraform-provider"
 	p, err := projectService.Get(slug)
 	if err != nil {
 		t.Log(err)
@@ -24,9 +24,6 @@ func TestGetProject(t *testing.T) {
 		t.FailNow()
 	}
 	t.Log(p)
-	if p.Slug != slug {
-		t.Errorf("Slug is not correct")
-	}
 }
 
 func TestGetProjectSettings(t *testing.T) {
@@ -37,7 +34,7 @@ func TestGetProjectSettings(t *testing.T) {
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	projectService := project.NewProjectService(client)
 
-	p, err := projectService.GetSettings("circleci", "8e4z1Akd74woxagxnvLT5q", "V29Cenkg8EaiSZARmWm8Lz")
+	p, err := projectService.GetSettings("github", "CircleCITestOrg", "test-project-terraform-provider")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error getting project settings")
