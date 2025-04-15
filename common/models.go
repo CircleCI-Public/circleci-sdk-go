@@ -30,3 +30,13 @@ type PaginatedResponse[T any] struct {
 	NextPageToken string `json:"next_page_token"`
 	Items         []T    `json:"items"`
 }
+
+type VcsInfo struct {
+	VcsUrl        string `json:"vcs_url"`
+	Provider      string `json:"provider"`
+	DefaultBranch string `json:"default_branch"`
+}
+
+type User struct {
+	Login string `json:"login"`
+}

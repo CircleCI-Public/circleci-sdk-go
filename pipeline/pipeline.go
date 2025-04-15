@@ -2,7 +2,6 @@ package pipeline
 
 import (
 	"encoding/json"
-	"log"
 	"fmt"
 	"net/http"
 
@@ -87,11 +86,6 @@ func (s *PipelineService) Delete(project_id, pipeline_id string) (error) {
 // name, description, config_source.file_path, checkout_source.provider, checkout_source.repo.external_id
 // This are the only values that can be updated with this method, and the objet passed can only have these defined
 func (s *PipelineService) Update(new_pipeline Pipeline, project_id, pipeline_id string) (*Pipeline, error) {
-	payload, err := json.Marshal(new_pipeline)
-	if err != nil {
-		return nil, err
-	}
-	log.Print(string(payload))
 	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", project_id, pipeline_id), new_pipeline)
 	if err != nil {
 		return nil, err

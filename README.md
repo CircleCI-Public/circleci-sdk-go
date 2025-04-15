@@ -3,7 +3,7 @@
 
 |RESOURCE | GET | CREATE | LIST | UPDATE | DELETE |
 |---------|-----|--------|------|--------|--------|
-|_project_|stand by|stand by|❌|❌|❌|
+|_project_|stable|stable|❌|❌|❌|
 |_project settings_|stable|❌|❌|stable|❌|
 |_pipeline definition_|stable|stable|stable|stable|stable|
 |_trigger_|stable|stable|stable|stable|stable|
