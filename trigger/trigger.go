@@ -17,6 +17,7 @@ type Trigger struct {
 	CheckoutRef string             `json:"checkout_ref,omitempty"`
 	ConfigRef   string             `json:"config_ref,omitempty"`
 	EventSource common.EventSource `json:"event_source,omitzero"`
+	EventName   string             `json:"event_name,omitempty"`
 	EventPreset string             `json:"event_preset,omitempty"`
 }
 
