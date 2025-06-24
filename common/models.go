@@ -22,6 +22,7 @@ type CheckoutSource struct {
 
 type EventSource struct {
 	Provider string  `json:"provider,omitempty"`
+	Sender   string  `json:"sender,omitempty"`
 	Repo     Repo    `json:"repo,omitzero"`
 	Webhook  Webhook `json:"webhook,omitzero"`
 }
