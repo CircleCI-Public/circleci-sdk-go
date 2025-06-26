@@ -56,11 +56,6 @@ func TestFullTriggerNew(t *testing.T) {
 		t.Error("Error creating trigger")
 		t.FailNow()
 	}
-	if err != nil {
-		t.Log(err)
-		t.Error("Error creating trigger")
-		t.FailNow()
-	}
 	id_new_trigger := trigger_created.ID
 	trigger_to_update := trigger.Trigger{
 		Name: "trigger-updated",
@@ -97,7 +92,6 @@ func TestFullTriggerNew(t *testing.T) {
 	}
 }
 
-
 func TestFullTrigger(t *testing.T) {
 	token := os.Getenv("CIRCLECI_CLI_TOKEN")
 	if token == "" {
@@ -122,11 +116,6 @@ func TestFullTrigger(t *testing.T) {
 		CheckoutRef: "main",
 	}
 	trigger_created, err := triggerService.Create(new_trigger, project_id, pipeline_id)
-	if err != nil {
-		t.Log(err)
-		t.Error("Error creating trigger")
-		t.FailNow()
-	}
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating trigger")

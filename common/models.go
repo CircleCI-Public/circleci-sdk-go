@@ -41,3 +41,12 @@ type VcsInfo struct {
 type User struct {
 	Login string `json:"login"`
 }
+
+type Scope struct {
+	Id string `json:"id,omitempty"`
+	Type string `json:"type,omitempty"`
+}
+
+func Bool(b bool) *bool {
+	return &b
+}
