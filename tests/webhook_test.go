@@ -9,7 +9,7 @@ import (
 )
 
 func TestFullWebhook(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
