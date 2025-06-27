@@ -46,7 +46,3 @@ type Scope struct {
 	Id string `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
 }
-
-func Bool(b bool) *bool {
-	return &b
-}
