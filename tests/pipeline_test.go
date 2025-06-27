@@ -10,7 +10,7 @@ import (
 )
 
 func TestFullPipeline(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -79,14 +79,14 @@ func TestFullPipeline(t *testing.T) {
 }
 
 func TestListPipeline(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
 	client := client.NewClient("https://circleci.com/api/v2", token)
 	pipelineService := pipeline.NewPipelineService(client)
 
-	project_id := "43155b9d-afdf-4616-a8c6-b32952416104"
+	project_id := "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
 	ps, err := pipelineService.List(project_id)
 	if err != nil {
 		t.Log(err)

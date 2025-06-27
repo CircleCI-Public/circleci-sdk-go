@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetProject(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -30,7 +30,7 @@ func TestGetProject(t *testing.T) {
 }
 
 func TestFullProject(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -78,7 +78,7 @@ func TestFullProject(t *testing.T) {
 
 // This test is for manual usage only
 func _TestClassicProject(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -97,7 +97,7 @@ func _TestClassicProject(t *testing.T) {
 
 // This test is for manual usage only
 func _TestDeleteProject(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}

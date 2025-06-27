@@ -10,7 +10,7 @@ import (
 )
 
 func TestListTrigger(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -29,7 +29,7 @@ func TestListTrigger(t *testing.T) {
 }
 
 func TestFullTriggerNew(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -51,11 +51,6 @@ func TestFullTriggerNew(t *testing.T) {
 		CheckoutRef: "main",
 	}
 	trigger_created, err := triggerService.Create(new_trigger, project_id, pipeline_id)
-	if err != nil {
-		t.Log(err)
-		t.Error("Error creating trigger")
-		t.FailNow()
-	}
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating trigger")
@@ -97,9 +92,8 @@ func TestFullTriggerNew(t *testing.T) {
 	}
 }
 
-
 func TestFullTrigger(t *testing.T) {
-	token := os.Getenv("CIRCLECI_CLI_TOKEN")
+	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
 	if token == "" {
 		t.Error("Error: Token not found")
 	}
@@ -122,11 +116,6 @@ func TestFullTrigger(t *testing.T) {
 		CheckoutRef: "main",
 	}
 	trigger_created, err := triggerService.Create(new_trigger, project_id, pipeline_id)
-	if err != nil {
-		t.Log(err)
-		t.Error("Error creating trigger")
-		t.FailNow()
-	}
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating trigger")
