@@ -21,14 +21,14 @@ type Project struct {
 }
 
 type AdvanceSettings struct {
-	AutocancelBuilds           bool     `json:"autocancel_builds,omitempty"`
-	BuildForkPrs               bool     `json:"build_fork_prs,omitempty"`
-	DisableSSH                 bool     `json:"disable_ssh,omitempty"`
-	ForksReceiveSecretEnvVars  bool     `json:"forks_receive_secret_env_vars,omitempty"`
-	OSS                        bool     `json:"oss,omitempty"`
-	SetGithubStatus            bool     `json:"set_github_status,omitempty"`
-	SetupWorkflows             bool     `json:"setup_workflows,omitempty"`
-	WriteSettingsRequiresAdmin bool     `json:"write_settings_requires_admin,omitempty"`
+	AutocancelBuilds           *bool     `json:"autocancel_builds,omitempty"`
+	BuildForkPrs               *bool     `json:"build_fork_prs,omitempty"`
+	DisableSSH                 *bool     `json:"disable_ssh,omitempty"`
+	ForksReceiveSecretEnvVars  *bool     `json:"forks_receive_secret_env_vars,omitempty"`
+	OSS                        *bool     `json:"oss,omitempty"`
+	SetGithubStatus            *bool     `json:"set_github_status,omitempty"`
+	SetupWorkflows             *bool     `json:"setup_workflows,omitempty"`
+	WriteSettingsRequiresAdmin *bool     `json:"write_settings_requires_admin,omitempty"`
 	PROnlyBranchOverrides      []string `json:"pr_only_branch_overrides,omitempty"`
 }
 

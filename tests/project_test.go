@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
+	"github.com/CircleCI-Public/circleci-sdk-go/common"
 	"github.com/CircleCI-Public/circleci-sdk-go/project"
 )
 
@@ -56,8 +57,8 @@ func TestFullProject(t *testing.T) {
 	t.Log(project_settings)
 	new_settings := project.ProjectSettings{
 		Advanced: project.AdvanceSettings{
-			AutocancelBuilds: true,
-			DisableSSH: false,
+			AutocancelBuilds: common.Bool(true),
+			DisableSSH: common.Bool(false),
 		},
 	}
 	project_settings, err = projectService.UpdateSettings(new_settings, "circleci", p.OrganizationId, p.Id)
