@@ -1,13 +1,11 @@
 package context
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Context struct {
@@ -36,14 +34,9 @@ func NewContextService(c *client.Client) *ContextService {
 }
 
 func (s *ContextService) Get(contextID string) (_ *Context, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, "/context/"+contextID, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
 	var context Context
-	if err := json.NewDecoder(res.Body).Decode(&context); err != nil {
+	_, err = s.client.RequestHelper(http.MethodGet, "/context/"+contextID, nil, &context)
+	if err != nil {
 		return nil, err
 	}
 	return &context, nil
@@ -53,16 +46,12 @@ func (s *ContextService) List(organizationSlug string) (_ []Context, err error) 
 	var nextPageToken string
 	var contextList []Context
 	for {
-		res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", organizationSlug, nextPageToken), nil)
+		var response common.PaginatedResponse[Context]
+		_, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", organizationSlug, nextPageToken), nil, &response)
 		if err != nil {
 			return nil, err
 		}
-		defer closer.ErrorHandler(res.Body, &err)
 
-		var response common.PaginatedResponse[Context]
-		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-			return nil, err
-		}
 		contextList = append(contextList, response.Items...)
 		if response.NextPageToken == "" {
 			break
@@ -80,41 +69,26 @@ func (s *ContextService) Create(organizationID, name string) (_ *Context, err er
 			"type": "organization",
 		},
 	}
-	res, err := s.client.RequestHelper(http.MethodPost, "/context", payload)
-	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
 	var context Context
-	if err := json.NewDecoder(res.Body).Decode(&context); err != nil {
+	_, err = s.client.RequestHelper(http.MethodPost, "/context", payload, &context)
+	if err != nil {
 		return nil, err
 	}
 	return &context, nil
 }
 
 func (s *ContextService) Delete(contextID string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, "/context/"+contextID, nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, "/context/"+contextID, nil, nil)
+	return err
 }
 
 func (s *ContextService) GetRestrictions(contextID string) (_ []ContextRestriction, err error) {
 	var nextPageToken string
 	var contextRestrictionList []ContextRestriction
 	for {
-		res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context/%s/restrictions?page-token=%s", contextID, nextPageToken), nil)
-		if err != nil {
-			return nil, err
-		}
-		defer closer.ErrorHandler(res.Body, &err)
-
 		var response common.PaginatedResponse[ContextRestriction]
-		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		_, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context/%s/restrictions?page-token=%s", contextID, nextPageToken), nil, &response)
+		if err != nil {
 			return nil, err
 		}
 		contextRestrictionList = append(contextRestrictionList, response.Items...)
@@ -127,13 +101,8 @@ func (s *ContextService) GetRestrictions(contextID string) (_ []ContextRestricti
 }
 
 func (s *ContextService) DeleteRestriction(contextID, restrictionID string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/context/%s/restrictions/%s", contextID, restrictionID), nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/context/%s/restrictions/%s", contextID, restrictionID), nil, nil)
+	return err
 }
 
 // CreateRestriction - context_id is the context this restriction applies to
@@ -144,14 +113,9 @@ func (s *ContextService) CreateRestriction(contextID, restrictionValue, restrict
 		"restriction_value": restrictionValue,
 		"restriction_type":  restrictionType,
 	}
-	res, err := s.client.RequestHelper(http.MethodPost, "/context/"+contextID+"/restrictions", payload)
-	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
 	var contextRestriction ContextRestriction
-	if err := json.NewDecoder(res.Body).Decode(&contextRestriction); err != nil {
+	_, err = s.client.RequestHelper(http.MethodPost, "/context/"+contextID+"/restrictions", payload, &contextRestriction)
+	if err != nil {
 		return nil, err
 	}
 	return &contextRestriction, nil

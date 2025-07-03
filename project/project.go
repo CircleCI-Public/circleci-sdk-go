@@ -1,14 +1,12 @@
 package project
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Project struct {
@@ -50,16 +48,12 @@ func NewProjectService(c *client.Client) *ProjectService {
 }
 
 func (s *ProjectService) Get(slug string) (_ *Project, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, "/project/"+slug, nil)
+	var project Project
+	_, err = s.client.RequestHelper(http.MethodGet, "/project/"+slug, nil, &project)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var project Project
-	if err := json.NewDecoder(res.Body).Decode(&project); err != nil {
-		return nil, err
-	}
 	return &project, nil
 }
 
@@ -67,60 +61,41 @@ func (s *ProjectService) Create(projectName, organizationID string) (_ *Project,
 	payload := map[string]string{
 		"name": projectName,
 	}
-	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/organization/%s/project", organizationID), payload)
+	var project Project
+	_, err = s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/organization/%s/project", organizationID), payload, &project)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var project Project
-	if err := json.NewDecoder(res.Body).Decode(&project); err != nil {
-		return nil, err
-	}
 	slug := strings.Split(project.Slug, "/")
 	if len(slug) == 3 && slug[1] == project.OrganizationName {
 		// TODO: The URL here probably need to be used in a different way depending on how on premise works
-		res, err := s.client.RequestHelperAbsolute(http.MethodGet, "https://circleci.com/api/v1.1/me", nil)
-		if err != nil {
-			return nil, err
-		}
-		defer closer.ErrorHandler(res.Body, &err)
 		var user common.User
-		if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
+		_, err = s.client.RequestHelperAbsolute(http.MethodGet, "https://circleci.com/api/v1.1/me", nil, &user)
+		if err != nil {
 			return nil, err
 		}
 		// TODO: The URL here probably need to be used in a different way depending on how on premise works
 		url := fmt.Sprintf("https://circleci.com/api/v1.1/project/%s/%s/%s/follow", strings.ToLower(project.VcsInfo.Provider), user.Login, project.Name)
-		res, err = s.client.RequestHelperAbsolute(http.MethodPost, url, nil)
+		_, err = s.client.RequestHelperAbsolute(http.MethodPost, url, nil, nil)
 		if err != nil {
 			return nil, err
 		}
-		defer closer.ErrorHandler(res.Body, &err)
 	}
 	return &project, nil
 }
 
 // Delete - Only standalone projects can be deleted
 func (s *ProjectService) Delete(slug string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/project/%s", slug), nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/project/%s", slug), nil, nil)
+	return err
 }
 
 // GetSettings - Settings are only available for standalone projects
 func (s *ProjectService) GetSettings(provider, organization, project string) (_ *ProjectSettings, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/project/%s/%s/%s/settings", provider, organization, project), nil)
-	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
 	var settings ProjectSettings
-	if err := json.NewDecoder(res.Body).Decode(&settings); err != nil {
+	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/project/%s/%s/%s/settings", provider, organization, project), nil, &settings)
+	if err != nil {
 		return nil, err
 	}
 	return &settings, nil
@@ -128,14 +103,11 @@ func (s *ProjectService) GetSettings(provider, organization, project string) (_ 
 
 // UpdateSettings - Settings are only available for standalone projects
 func (s *ProjectService) UpdateSettings(newSettings ProjectSettings, provider, organization, project string) (_ *ProjectSettings, err error) {
-	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/project/%s/%s/%s/settings", provider, organization, project), newSettings)
+	var settings ProjectSettings
+	_, err = s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/project/%s/%s/%s/settings", provider, organization, project), newSettings, &settings)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
-	var settings ProjectSettings
-	if err := json.NewDecoder(res.Body).Decode(&settings); err != nil {
-		return nil, err
-	}
+
 	return &settings, nil
 }

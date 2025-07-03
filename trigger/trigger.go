@@ -1,13 +1,11 @@
 package trigger
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Trigger struct {
@@ -37,69 +35,49 @@ func NewTriggerService(c *client.Client) *TriggerService {
 }
 
 func (s *TriggerService) Get(projectID, triggerID string) (_ *Trigger, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil)
+	var trigger Trigger
+	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, &trigger)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var trigger Trigger
-	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
-		return nil, err
-	}
 	return &trigger, nil
 }
 
 func (s *TriggerService) List(projectID, pipelineID string) (_ []Trigger, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil)
+	var triggerItems TriggerItems
+	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil, &triggerItems)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var triggerItems TriggerItems
-	if err := json.NewDecoder(res.Body).Decode(&triggerItems); err != nil {
-		return nil, err
-	}
 	return triggerItems.Items, nil
 }
 
 func (s *TriggerService) Create(newTrigger Trigger, projectID, pipelineID string) (_ *Trigger, err error) {
-	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), newTrigger)
+	var trigger Trigger
+	_, err = s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), newTrigger, &trigger)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var trigger Trigger
-	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
-		return nil, err
-	}
 	return &trigger, nil
 }
 
 func (s *TriggerService) Delete(projectID, triggerID string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, nil)
+	return err
 }
 
 // Update The new trigger param can only have the esseential values:
 // name, description, event_preset, checkout_ref, config_ref
 // This are the only values that can be updated with this method
 func (s *TriggerService) Update(newTrigger Trigger, projectID, triggerID string) (_ *Trigger, err error) {
-	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), newTrigger)
+	var trigger Trigger
+	_, err = s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), newTrigger, &trigger)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
-	var trigger Trigger
-	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
-		return nil, err
-	}
+
 	return &trigger, nil
 }
