@@ -6,23 +6,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {
 	BaseURL    string
-	HTTPClient *http.Client
+	HTTPClient *retryablehttp.Client
 	AuthToken  string
 }
 
 func NewClient(baseURL, authToken string) *Client {
 	return &Client{
 		BaseURL:    baseURL,
-		HTTPClient: &http.Client{},
+		HTTPClient: retryablehttp.NewClient(),
 		AuthToken:  authToken,
 	}
 }
 
-func requestHelperFunction(url, token, method string, body any, client *http.Client) (*http.Response, error) {
+func requestHelperFunction(url, token, method string, body any, client *retryablehttp.Client) (*http.Response, error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -31,7 +33,7 @@ func requestHelperFunction(url, token, method string, body any, client *http.Cli
 		}
 		reqBody = bytes.NewBuffer(jsonData)
 	}
-	req, err := http.NewRequest(method, url, reqBody)
+	req, err := retryablehttp.NewRequest(method, url, reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -61,5 +63,5 @@ func (c *Client) RequestHelperAbsolute(method, path string, body any) (*http.Res
 }
 
 func (c *Client) RequestHelper(method, path string, body any) (*http.Response, error) {
-	return requestHelperFunction(c.BaseURL + path, c.AuthToken, method, body, c.HTTPClient)
+	return requestHelperFunction(c.BaseURL+path, c.AuthToken, method, body, c.HTTPClient)
 }
