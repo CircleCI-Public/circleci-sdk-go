@@ -7,12 +7,16 @@ import (
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Webhook struct {
-	Id            string       `json:"id,omitempty"`
-	Name          string       `json:"name,omitempty"`
-	Url           string       `json:"url,omitempty"`
+	//nolint:revive // introduced before linter
+	Id   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	// nolint:revive // introduced before linter
+	Url string `json:"url,omitempty"`
+	//nolint:revive // introduced before linter
 	VerifyTls     *bool        `json:"verify-tls,omitempty"`
 	SigningSecret string       `json:"signing-secret,omitempty"`
 	UpdatedAt     string       `json:"updated-at,omitempty"`
@@ -21,6 +25,7 @@ type Webhook struct {
 	Events        []string     `json:"events,omitempty"`
 }
 
+// nolint:revive // introduced before linter
 type WebhookService struct {
 	client *client.Client
 }
@@ -29,12 +34,12 @@ func NewWebhookService(c *client.Client) *WebhookService {
 	return &WebhookService{client: c}
 }
 
-func (s *WebhookService) Get(webhook_id string) (*Webhook, error) {
-	res, err := s.client.RequestHelper(http.MethodGet, "/webhook/"+webhook_id, nil)
+func (s *WebhookService) Get(webhookID string) (_ *Webhook, err error) {
+	res, err := s.client.RequestHelper(http.MethodGet, "/webhook/"+webhookID, nil)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var webhook Webhook
 	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
@@ -43,36 +48,36 @@ func (s *WebhookService) Get(webhook_id string) (*Webhook, error) {
 	return &webhook, nil
 }
 
-func (s *WebhookService) List(scope_id string) ([]Webhook, error) {
-	var next_page_token string
-	var webhook_list []Webhook
+func (s *WebhookService) List(scopeID string) (_ []Webhook, err error) {
+	var nextPageToken string
+	var webhookList []Webhook
 	for {
 		res, err := s.client.RequestHelper(http.MethodGet,
-			fmt.Sprintf("/webhook?scope-id=%s&scope-type=project&page-token=%s", scope_id, next_page_token), nil)
+			fmt.Sprintf("/webhook?scope-id=%s&scope-type=project&page-token=%s", scopeID, nextPageToken), nil)
 		if err != nil {
 			return nil, err
 		}
-		defer res.Body.Close()
+		defer closer.ErrorHandler(res.Body, &err)
 
 		var response common.PaginatedResponse[Webhook]
 		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 			return nil, err
 		}
-		webhook_list = append(webhook_list, response.Items...)
+		webhookList = append(webhookList, response.Items...)
 		if response.NextPageToken == "" {
 			break
 		}
-		next_page_token = response.NextPageToken
+		nextPageToken = response.NextPageToken
 	}
-	return webhook_list, nil
+	return webhookList, nil
 }
 
-func (s *WebhookService) Create(new_webhook Webhook) (*Webhook, error) {
-	res, err := s.client.RequestHelper(http.MethodPost, "/webhook", new_webhook)
+func (s *WebhookService) Create(newWebhook Webhook) (_ *Webhook, err error) {
+	res, err := s.client.RequestHelper(http.MethodPost, "/webhook", newWebhook)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var webhook Webhook
 	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
@@ -81,13 +86,13 @@ func (s *WebhookService) Create(new_webhook Webhook) (*Webhook, error) {
 	return &webhook, nil
 }
 
-// The scope cannot be updated
-func (s *WebhookService) Update(new_webhook Webhook, webhook_id string) (*Webhook, error) {
-	res, err := s.client.RequestHelper(http.MethodPut, "/webhook/"+webhook_id, new_webhook)
+// Update - The scope cannot be updated
+func (s *WebhookService) Update(newWebhook Webhook, webhookID string) (_ *Webhook, err error) {
+	res, err := s.client.RequestHelper(http.MethodPut, "/webhook/"+webhookID, newWebhook)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 	var webhook Webhook
 	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
 		return nil, err
@@ -95,12 +100,12 @@ func (s *WebhookService) Update(new_webhook Webhook, webhook_id string) (*Webhoo
 	return &webhook, nil
 }
 
-func (s *WebhookService) Delete(webhook_id string) error {
-	res, err := s.client.RequestHelper(http.MethodDelete, "/webhook/"+webhook_id, nil)
+func (s *WebhookService) Delete(webhookID string) (err error) {
+	res, err := s.client.RequestHelper(http.MethodDelete, "/webhook/"+webhookID, nil)
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	return nil
 }

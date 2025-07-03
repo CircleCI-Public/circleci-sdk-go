@@ -7,6 +7,7 @@ import (
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Pipeline struct {
@@ -18,10 +19,12 @@ type Pipeline struct {
 	CheckoutSource common.CheckoutSource `json:"checkout_source,omitzero"`
 }
 
+// nolint:revive // introduced before linter
 type PipelineItems struct {
 	Items []Pipeline `json:"items"`
 }
 
+// nolint:revive // introduced before linter
 type PipelineService struct {
 	client *client.Client
 }
@@ -30,12 +33,12 @@ func NewPipelineService(c *client.Client) *PipelineService {
 	return &PipelineService{client: c}
 }
 
-func (s *PipelineService) Get(project_id, pipeline_id string) (*Pipeline, error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", project_id, pipeline_id), nil)
+func (s *PipelineService) Get(projectID, pipelineID string) (_ *Pipeline, err error) {
+	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var pipeline Pipeline
 	if err := json.NewDecoder(res.Body).Decode(&pipeline); err != nil {
@@ -44,12 +47,12 @@ func (s *PipelineService) Get(project_id, pipeline_id string) (*Pipeline, error)
 	return &pipeline, nil
 }
 
-func (s *PipelineService) List(project_id string) ([]Pipeline, error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions", project_id), nil)
+func (s *PipelineService) List(projectID string) (_ []Pipeline, err error) {
+	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var pipelineItems PipelineItems
 	if err := json.NewDecoder(res.Body).Decode(&pipelineItems); err != nil {
@@ -58,12 +61,12 @@ func (s *PipelineService) List(project_id string) ([]Pipeline, error) {
 	return pipelineItems.Items, nil
 }
 
-func (s *PipelineService) Create(new_pipeline Pipeline, project_id string) (*Pipeline, error) {
-	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions", project_id), new_pipeline)
+func (s *PipelineService) Create(newPipeline Pipeline, projectID string) (_ *Pipeline, err error) {
+	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), newPipeline)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var pipeline Pipeline
 	if err := json.NewDecoder(res.Body).Decode(&pipeline); err != nil {
@@ -72,25 +75,25 @@ func (s *PipelineService) Create(new_pipeline Pipeline, project_id string) (*Pip
 	return &pipeline, nil
 }
 
-func (s *PipelineService) Delete(project_id, pipeline_id string) (error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", project_id, pipeline_id), nil)
+func (s *PipelineService) Delete(projectID, pipelineID string) (err error) {
+	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil)
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	return nil
 }
 
-// The new pipeline param can only have the eseential values:
+// Update - The new pipeline param can only have the eseential values:
 // name, description, config_source.file_path, checkout_source.provider, checkout_source.repo.external_id
 // This are the only values that can be updated with this method, and the objet passed can only have these defined
-func (s *PipelineService) Update(new_pipeline Pipeline, project_id, pipeline_id string) (*Pipeline, error) {
-	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", project_id, pipeline_id), new_pipeline)
+func (s *PipelineService) Update(newPipeline Pipeline, projectID, pipelineID string) (_ *Pipeline, err error) {
+	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), newPipeline)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 	var pipeline Pipeline
 	if err := json.NewDecoder(res.Body).Decode(&pipeline); err != nil {
 		return nil, err

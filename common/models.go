@@ -1,11 +1,14 @@
+// nolint:revive // introduced before linter
 package common
 
 type Repo struct {
-	FullName   string `json:"full_name,omitempty"`
+	FullName string `json:"full_name,omitempty"`
+	// nolint:revive // introduced before linter
 	ExternalId string `json:"external_id,omitempty"`
 }
 
 type Webhook struct {
+	// nolint:revive // introduced before linter
 	Url    string `json:"url,omitempty"`
 	Sender string `json:"sender,omitempty"`
 }
@@ -33,6 +36,7 @@ type PaginatedResponse[T any] struct {
 }
 
 type VcsInfo struct {
+	// nolint:revive // introduced before linter
 	VcsUrl        string `json:"vcs_url"`
 	Provider      string `json:"provider"`
 	DefaultBranch string `json:"default_branch"`
@@ -43,6 +47,7 @@ type User struct {
 }
 
 type Scope struct {
-	Id string `json:"id,omitempty"`
+	// nolint:revive // introduced before linter
+	Id   string `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
 }

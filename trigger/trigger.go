@@ -7,6 +7,7 @@ import (
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Trigger struct {
@@ -21,10 +22,12 @@ type Trigger struct {
 	EventPreset string             `json:"event_preset,omitempty"`
 }
 
+// nolint:revive // introduced before linter
 type TriggerItems struct {
 	Items []Trigger `json:"items"`
 }
 
+// nolint:revive // introduced before linter
 type TriggerService struct {
 	client *client.Client
 }
@@ -33,12 +36,12 @@ func NewTriggerService(c *client.Client) *TriggerService {
 	return &TriggerService{client: c}
 }
 
-func (s *TriggerService) Get(project_id, trigger_id string) (*Trigger, error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", project_id, trigger_id), nil)
+func (s *TriggerService) Get(projectID, triggerID string) (_ *Trigger, err error) {
+	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var trigger Trigger
 	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
@@ -47,12 +50,12 @@ func (s *TriggerService) Get(project_id, trigger_id string) (*Trigger, error) {
 	return &trigger, nil
 }
 
-func (s *TriggerService) List(project_id, pipeline_id string) ([]Trigger, error) {
-	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", project_id, pipeline_id), nil)
+func (s *TriggerService) List(projectID, pipelineID string) (_ []Trigger, err error) {
+	res, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var triggerItems TriggerItems
 	if err := json.NewDecoder(res.Body).Decode(&triggerItems); err != nil {
@@ -61,12 +64,12 @@ func (s *TriggerService) List(project_id, pipeline_id string) ([]Trigger, error)
 	return triggerItems.Items, nil
 }
 
-func (s *TriggerService) Create(new_trigger Trigger, project_id, pipeline_id string) (*Trigger, error) {
-	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", project_id, pipeline_id), new_trigger)
+func (s *TriggerService) Create(newTrigger Trigger, projectID, pipelineID string) (_ *Trigger, err error) {
+	res, err := s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), newTrigger)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	var trigger Trigger
 	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
@@ -75,25 +78,25 @@ func (s *TriggerService) Create(new_trigger Trigger, project_id, pipeline_id str
 	return &trigger, nil
 }
 
-func (s *TriggerService) Delete(project_id, trigger_id string) error {
-	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", project_id, trigger_id), nil)
+func (s *TriggerService) Delete(projectID, triggerID string) (err error) {
+	res, err := s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil)
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 
 	return nil
 }
 
-// The new trigger param can only have the eseential values:
+// Update The new trigger param can only have the esseential values:
 // name, description, event_preset, checkout_ref, config_ref
 // This are the only values that can be updated with this method
-func (s *TriggerService) Update(new_trigger Trigger, project_id, trigger_id string) (*Trigger, error) {
-	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", project_id, trigger_id), new_trigger)
+func (s *TriggerService) Update(newTrigger Trigger, projectID, triggerID string) (_ *Trigger, err error) {
+	res, err := s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), newTrigger)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer closer.ErrorHandler(res.Body, &err)
 	var trigger Trigger
 	if err := json.NewDecoder(res.Body).Decode(&trigger); err != nil {
 		return nil, err
