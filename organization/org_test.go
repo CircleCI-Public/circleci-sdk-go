@@ -1,22 +1,21 @@
-package tests
+package organization
 
 import (
 	"os"
 	"testing"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/organization"
+	"gotest.tools/v3/skip"
 )
 
 func TestCreateOrg(t *testing.T) {
 	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	if token == "" {
-		t.Error("Error: Token not found")
-	}
-	client := client.NewClient("https://circleci.com/api/v2", token)
-	orgService := organization.NewOrganizationService(client)
+	skip.If(t, token == "", "Token not found")
 
-	org, err := orgService.Create("SDK_ORG_TEST", "circleci")
+	c := client.NewClient("https://circleci.com/api/v2", token)
+	orgService := NewOrganizationService(c)
+
+	org, err := orgService.Create("SDK_ORG_TEST2", "circleci")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating organization")

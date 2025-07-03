@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Client struct {
@@ -22,7 +24,7 @@ func NewClient(baseURL, authToken string) *Client {
 	}
 }
 
-func requestHelperFunction(url, token, method string, body any, client *http.Client) (*http.Response, error) {
+func requestHelperFunction(url, token, method string, body any, client *http.Client) (res *http.Response, err error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -39,27 +41,27 @@ func requestHelperFunction(url, token, method string, body any, client *http.Cli
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Circle-Token", token)
 
-	res, err := client.Do(req)
+	res, err = client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
 	if res.StatusCode >= 400 {
-		defer res.Body.Close()
+		defer closer.ErrorHandler(res.Body, &err)
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return nil, fmt.Errorf("Error Reading response: %s", err)
+			return nil, fmt.Errorf("error Reading response: %w", err)
 		}
 		return nil, fmt.Errorf("%s: %s", res.Status, string(body))
 	}
 	return res, nil
 }
 
-// This is the same as RequestHelper but allows to do a request to other APIs
+// RequestHelperAbsolute is the same as RequestHelper but allows to do a request to other APIs
 func (c *Client) RequestHelperAbsolute(method, path string, body any) (*http.Response, error) {
 	return requestHelperFunction(path, c.AuthToken, method, body, c.HTTPClient)
 }
 
 func (c *Client) RequestHelper(method, path string, body any) (*http.Response, error) {
-	return requestHelperFunction(c.BaseURL + path, c.AuthToken, method, body, c.HTTPClient)
+	return requestHelperFunction(c.BaseURL+path, c.AuthToken, method, body, c.HTTPClient)
 }

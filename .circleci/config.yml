@@ -2,23 +2,49 @@ version: 2.1
 
 orbs:
   go: circleci/go@3.0.2
-filters: &filters
-  tags:
-    only: /.*/
+
+commands:
+  store_results:
+    steps:
+      - store_artifacts:
+          path: test-reports
+      - store_test_results:
+          path: test-reports
+
+  setup:
+    steps:
+      - checkout
+      - run: task mod-download
+
 jobs:
-  build:
+  lint:
     executor:
       name: go/default
       tag: '1.24'
     steps:
-      - checkout
+      - setup
+      - go/with-cache:
+          golangci-lint: true
+          steps:
+            - run: task ci:diff
+            - run: task ci:lint
+      - store_results
+
+  test:
+    executor:
+      name: go/default
+      tag: '1.24'
+    steps:
+      - setup
       - go/with-cache:
           steps:
-            - go/test:
-                packages: ./tests/
+            - run: task ci:test
+      - store_results
+
+
 workflows:
   main:
     jobs:
-      - build:
+      - lint
+      - test:
           context: CircleCITestOrg-ccipat
-          filters: *filters
