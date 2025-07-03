@@ -1,11 +1,9 @@
 package organization
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Organization struct {
@@ -26,28 +24,18 @@ func NewOrganizationService(c *client.Client) *OrganizationService {
 }
 
 func (s *OrganizationService) Create(name, vcsType string) (org *Organization, err error) {
-	res, err := s.client.RequestHelper(http.MethodPost, "/organization", Organization{
+	org = &Organization{}
+	_, err = s.client.RequestHelper(http.MethodPost, "/organization", Organization{
 		Name:    name,
 		VcsType: vcsType,
-	})
+	}, org)
 	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	org = &Organization{}
-	if err := json.NewDecoder(res.Body).Decode(org); err != nil {
 		return nil, err
 	}
 	return org, nil
 }
 
 func (s *OrganizationService) Delete(orgID string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, "/organization/"+orgID, nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, "/organization/"+orgID, nil, nil)
+	return err
 }
