@@ -1,13 +1,11 @@
 package webhook
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
 
 type Webhook struct {
@@ -35,14 +33,9 @@ func NewWebhookService(c *client.Client) *WebhookService {
 }
 
 func (s *WebhookService) Get(webhookID string) (_ *Webhook, err error) {
-	res, err := s.client.RequestHelper(http.MethodGet, "/webhook/"+webhookID, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
 	var webhook Webhook
-	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
+	_, err = s.client.RequestHelper(http.MethodGet, "/webhook/"+webhookID, nil, &webhook)
+	if err != nil {
 		return nil, err
 	}
 	return &webhook, nil
@@ -52,17 +45,16 @@ func (s *WebhookService) List(scopeID string) (_ []Webhook, err error) {
 	var nextPageToken string
 	var webhookList []Webhook
 	for {
-		res, err := s.client.RequestHelper(http.MethodGet,
-			fmt.Sprintf("/webhook?scope-id=%s&scope-type=project&page-token=%s", scopeID, nextPageToken), nil)
+		var response common.PaginatedResponse[Webhook]
+		_, err = s.client.RequestHelper(http.MethodGet,
+			fmt.Sprintf("/webhook?scope-id=%s&scope-type=project&page-token=%s", scopeID, nextPageToken),
+			nil,
+			&response,
+		)
 		if err != nil {
 			return nil, err
 		}
-		defer closer.ErrorHandler(res.Body, &err)
 
-		var response common.PaginatedResponse[Webhook]
-		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-			return nil, err
-		}
 		webhookList = append(webhookList, response.Items...)
 		if response.NextPageToken == "" {
 			break
@@ -73,39 +65,27 @@ func (s *WebhookService) List(scopeID string) (_ []Webhook, err error) {
 }
 
 func (s *WebhookService) Create(newWebhook Webhook) (_ *Webhook, err error) {
-	res, err := s.client.RequestHelper(http.MethodPost, "/webhook", newWebhook)
+	var webhook Webhook
+	_, err = s.client.RequestHelper(http.MethodPost, "/webhook", newWebhook, &webhook)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
 
-	var webhook Webhook
-	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
-		return nil, err
-	}
 	return &webhook, nil
 }
 
 // Update - The scope cannot be updated
 func (s *WebhookService) Update(newWebhook Webhook, webhookID string) (_ *Webhook, err error) {
-	res, err := s.client.RequestHelper(http.MethodPut, "/webhook/"+webhookID, newWebhook)
+	var webhook Webhook
+	_, err = s.client.RequestHelper(http.MethodPut, "/webhook/"+webhookID, newWebhook, &webhook)
 	if err != nil {
 		return nil, err
 	}
-	defer closer.ErrorHandler(res.Body, &err)
-	var webhook Webhook
-	if err := json.NewDecoder(res.Body).Decode(&webhook); err != nil {
-		return nil, err
-	}
+
 	return &webhook, nil
 }
 
 func (s *WebhookService) Delete(webhookID string) (err error) {
-	res, err := s.client.RequestHelper(http.MethodDelete, "/webhook/"+webhookID, nil)
-	if err != nil {
-		return err
-	}
-	defer closer.ErrorHandler(res.Body, &err)
-
-	return nil
+	_, err = s.client.RequestHelper(http.MethodDelete, "/webhook/"+webhookID, nil, nil)
+	return err
 }

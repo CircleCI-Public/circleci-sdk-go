@@ -1,7 +1,6 @@
 package client_test
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,11 +20,12 @@ func TestClient_RequestHelper(t *testing.T) {
 
 	t.Run("authed", func(t *testing.T) {
 		c := client.NewClient(srv.URL, testTok)
+		body := make(map[string]any)
 		res, err := c.RequestHelper(http.MethodGet, "/api/test", map[string]any{
 			"foo": "bar",
-		})
+		}, &body)
 		assert.Assert(t, err)
-		body := decodeBody(t, res)
+		assert.Check(t, cmp.Equal(res.StatusCode, http.StatusOK))
 		assert.Check(t, cmp.DeepEqual(body, map[string]any{
 			"message": "Hello World!",
 		}))
@@ -33,9 +33,10 @@ func TestClient_RequestHelper(t *testing.T) {
 
 	t.Run("unauthed", func(t *testing.T) {
 		c := client.NewClient(srv.URL, "")
+		body := make(map[string]any)
 		res, err := c.RequestHelper(http.MethodGet, "/api/test", map[string]any{
 			"foo": "bar",
-		})
+		}, &body)
 		assert.Check(t, cmp.ErrorContains(err, "401 Unauthorized"))
 		assert.Check(t, cmp.ErrorContains(err, "You must log in first."))
 		assert.Check(t, cmp.Nil(res))
@@ -43,23 +44,12 @@ func TestClient_RequestHelper(t *testing.T) {
 
 	t.Run("bad_token", func(t *testing.T) {
 		c := client.NewClient(srv.URL, "not-valid")
+		body := make(map[string]any)
 		res, err := c.RequestHelper(http.MethodGet, "/api/test", map[string]any{
 			"foo": "bar",
-		})
+		}, &body)
 		assert.Check(t, cmp.ErrorContains(err, "401 Unauthorized"))
 		assert.Check(t, cmp.ErrorContains(err, "Invalid token provided."))
 		assert.Check(t, cmp.Nil(res))
 	})
-}
-
-func decodeBody(t testing.TB, r *http.Response) map[string]any {
-	t.Helper()
-	defer func() {
-		assert.Check(t, r.Body.Close())
-	}()
-
-	m := make(map[string]any)
-	err := json.NewDecoder(r.Body).Decode(&m)
-	assert.Assert(t, err)
-	return m
 }
