@@ -19,7 +19,7 @@ func New(tok string) *Service {
 
 	mux.HandleFunc("GET /api/test", c.getTest)
 	// TODO: More routes here
-
+	mux.HandleFunc("POST /api/retry", c.retryTest)
 	return c
 }
 
@@ -28,3 +28,6 @@ func (s *Service) getTest(w http.ResponseWriter, _ *http.Request) {
 }
 
 // TODO: More routes here
+func (s *Service) retryTest(w http.ResponseWriter, _ *http.Request) {
+	msg(w, http.StatusGatewayTimeout, "Timeout")
+}
