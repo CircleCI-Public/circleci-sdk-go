@@ -3,12 +3,11 @@ module github.com/CircleCI-Public/circleci-sdk-go
 go 1.24.0
 
 require (
-	gotest.tools/v3 v3.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.8
+	gotest.tools/v3 v3.5.2
 )
 
 require (
-	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	4d63.com/gocheckcompilerdirectives v1.3.0 // indirect
 	4d63.com/gochecknoglobals v0.2.2 // indirect
 	codeberg.org/chavacava/garif v0.2.0 // indirect
@@ -96,6 +95,7 @@ require (
 	github.com/gostaticanalysis/comment v1.5.0 // indirect
 	github.com/gostaticanalysis/forcetypeassert v0.2.0 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
