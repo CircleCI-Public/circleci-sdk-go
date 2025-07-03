@@ -15,7 +15,7 @@ func TestCreateOrg(t *testing.T) {
 	c := client.NewClient("https://circleci.com/api/v2", token)
 	orgService := NewOrganizationService(c)
 
-	org, err := orgService.Create("SDK_ORG_TEST", "circleci")
+	org, err := orgService.Create("SDK_ORG_TEST2", "circleci")
 	if err != nil {
 		t.Log(err)
 		t.Error("Error creating organization")
