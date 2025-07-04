@@ -5,10 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
+
+	"github.com/CircleCI-Public/circleci-sdk-go/client"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 )
 
 func TestClient_Retry(t *testing.T) {

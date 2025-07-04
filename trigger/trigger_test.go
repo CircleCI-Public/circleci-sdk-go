@@ -4,11 +4,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/common"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
 	"gotest.tools/v3/skip"
+
+	"github.com/CircleCI-Public/circleci-sdk-go/client"
+	"github.com/CircleCI-Public/circleci-sdk-go/common"
 )
 
 const (
