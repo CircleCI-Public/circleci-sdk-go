@@ -26,7 +26,7 @@ tasks:
     vars:
       ARGS: '{{default "." .CLI_ARGS}}'
     cmds:
-      - go tool gosimports -local "github.com/circleci/{{.SERVICE_NAME}}" -w {{.ARGS}}
+      - go tool gosimports -local "github.com/CircleCI-Public/{{.SERVICE_NAME}}" -w {{.ARGS}}
 
   test:
     desc: Run the tests

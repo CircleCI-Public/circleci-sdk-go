@@ -4,9 +4,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/skip"
+
+	"github.com/CircleCI-Public/circleci-sdk-go/client"
 )
 
 func TestListEnvs(t *testing.T) {

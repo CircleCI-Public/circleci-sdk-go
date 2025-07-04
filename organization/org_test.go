@@ -4,8 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"gotest.tools/v3/skip"
+
+	"github.com/CircleCI-Public/circleci-sdk-go/client"
 )
 
 func TestCreateOrg(t *testing.T) {

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/hashicorp/go-retryablehttp"
+
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
-	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {
