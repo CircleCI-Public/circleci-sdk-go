@@ -5,26 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {
 	BaseURL    string
-	HTTPClient *http.Client
+	HTTPClient *retryablehttp.Client
 	AuthToken  string
 }
 
 func NewClient(baseURL, authToken string) *Client {
 	return &Client{
 		BaseURL:    baseURL,
-		HTTPClient: &http.Client{},
+		HTTPClient: retryablehttp.NewClient(),
 		AuthToken:  authToken,
 	}
 }
 
-func requestHelperFunction(url, token, method string, body, respBody any, client *http.Client) (_ *Response, err error) {
+func requestHelperFunction(url, token, method string, body, respBody any, client *retryablehttp.Client) (_ *Response, err error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -33,7 +33,7 @@ func requestHelperFunction(url, token, method string, body, respBody any, client
 		}
 		reqBody = bytes.NewBuffer(jsonData)
 	}
-	req, err := http.NewRequest(method, url, reqBody)
+	req, err := retryablehttp.NewRequest(method, url, reqBody)
 	if err != nil {
 		return nil, err
 	}

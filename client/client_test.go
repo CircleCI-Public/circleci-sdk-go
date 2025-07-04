@@ -11,6 +11,24 @@ import (
 	"gotest.tools/v3/assert/cmp"
 )
 
+func TestClient_Retry(t *testing.T) {
+	const testTok = "CCIPAT_865d543e-9d33-4157-a6cc-8f4416a02df0"
+
+	fs := fakecircle.New(testTok)
+	srv := httptest.NewServer(fs)
+	t.Cleanup(srv.Close)
+
+	t.Run("authed", func(t *testing.T) {
+		c := client.NewClient(srv.URL, testTok)
+		body := make(map[string]any)
+		res, err := c.RequestHelper(http.MethodPost, "/api/retry", map[string]any{
+			"foo": "bar",
+		}, &body)
+		assert.Check(t, cmp.ErrorContains(err, "giving up after"))
+		assert.Check(t, cmp.Nil(res))
+	})
+}
+
 func TestClient_RequestHelper(t *testing.T) {
 	const testTok = "CCIPAT_865d543e-9d33-4157-a6cc-8f4416a02df0"
 
