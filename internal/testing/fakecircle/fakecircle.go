@@ -1,8 +1,18 @@
 package fakecircle
 
 import (
+	"errors"
 	"net/http"
+	"sync"
 	"sync/atomic"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+)
+
+var (
+	errDuplicate = errors.New("duplicate")
+	errNotFound  = errors.New("not found")
 )
 
 type Service struct {
@@ -11,59 +21,69 @@ type Service struct {
 
 	hit429 atomic.Bool
 	hit500 atomic.Bool
+
+	mu       sync.RWMutex
+	orgs     map[uuid.UUID]*org
+	contexts map[uuid.UUID]*context
 }
 
 func New(tok string) *Service {
+	r := gin.New()
 	c := &Service{
-		tok: tok,
+		tok:      tok,
+		Handler:  r,
+		orgs:     make(map[uuid.UUID]*org),
+		contexts: make(map[uuid.UUID]*context),
 	}
 
-	mux := http.NewServeMux()
-	c.Handler = mux
-	c.Handler = c.auth(c.Handler)
-	c.Handler = loggingHandler(c.Handler)
+	r.Use(c.auth)
 
-	mux.HandleFunc("GET /api/test/hello", c.getHello)
-	mux.HandleFunc("POST /api/test/echo", c.postEcho)
-	mux.HandleFunc("GET /api/test/429", c.get429)
-	mux.HandleFunc("GET /api/test/500", c.get500)
-	// TODO: More routes here
+	r.GET("/api/test/hello", c.getHello)
+	r.POST("/api/test/echo", c.postEcho)
+	r.GET("/api/test/429", c.get429)
+	r.GET("/api/test/500", c.get500)
+
+	r.GET("/api/v2/context", c.getContextBySlug)
+	r.POST("/api/v2/context", c.postContext)
+	r.GET("/api/v2/context/:context-id", c.getContextByID)
+	r.DELETE("/api/v2/context/:context-id", c.deleteContext)
+	r.GET("/api/v2/context/:context-id/environment-variable", c.getContextEnv)
+	r.PUT("/api/v2/context/:context-id/environment-variable/:env-var", c.putContextEnv)
+	r.DELETE("/api/v2/context/:context-id/environment-variable/:env-var", c.deleteContextEnv)
 
 	return c
 }
 
-func (s *Service) getHello(w http.ResponseWriter, _ *http.Request) {
-	msg(w, http.StatusOK, "Hello World!")
+func (s *Service) getHello(c *gin.Context) {
+	msg(c, http.StatusOK, "Hello World!")
 }
 
-func (s *Service) postEcho(w http.ResponseWriter, r *http.Request) {
+func (s *Service) postEcho(c *gin.Context) {
 	var body map[string]any
-	err := decode(r.Body, &body)
+	err := c.BindJSON(&body)
 	if err != nil {
-		msg(w, http.StatusBadRequest, err.Error())
+		msg(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	jsonBody(w, body)
+	c.JSON(http.StatusOK, body)
 }
 
-func (s *Service) get429(w http.ResponseWriter, _ *http.Request) {
+func (s *Service) get429(c *gin.Context) {
 	if !s.hit429.Swap(true) {
-		w.Header().Set("Retry-After", "1")
-		msg(w, http.StatusTooManyRequests, "Too many requests.")
+		c.Header("Retry-After", "1")
+		msg(c, http.StatusTooManyRequests, "Too many requests.")
 		return
 	}
 
-	msg(w, http.StatusOK, "Successfully retried.")
+	msg(c, http.StatusOK, "Successfully retried.")
 }
 
-func (s *Service) get500(w http.ResponseWriter, _ *http.Request) {
+func (s *Service) get500(c *gin.Context) {
 	if !s.hit500.Swap(true) {
-		msg(w, http.StatusInternalServerError, "Internal server error.")
+		msg(c, http.StatusInternalServerError, "Internal server error.")
 		return
 	}
 
-	msg(w, http.StatusOK, "Successfully retried.")
+	msg(c, http.StatusOK, "Successfully retried.")
 }
-
-// TODO: More routes here

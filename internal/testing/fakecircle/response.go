@@ -1,31 +1,34 @@
 package fakecircle
 
 import (
-	"encoding/json"
-	"io"
+	"log/slog"
 	"net/http"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
+	"github.com/gin-gonic/gin"
 )
 
-func msg(w http.ResponseWriter, statusCode int, message string) {
-	w.WriteHeader(statusCode)
-	jsonBody(w, struct {
+func msg(c *gin.Context, statusCode int, message string) {
+	c.JSON(statusCode, struct {
 		Message string `json:"message"`
 	}{
 		Message: message,
 	})
 }
 
-func decode(r io.ReadCloser, v any) (err error) {
-	defer closer.ErrorHandler(r, &err)
-	defer func() {
-		_, _ = io.Copy(io.Discard, r)
-	}()
-
-	return json.NewDecoder(r).Decode(v)
+func mapBadRequest(c *gin.Context, message string, err error) bool {
+	if err == nil {
+		return false
+	}
+	slog.Warn(err.Error())
+	msg(c, http.StatusBadRequest, message)
+	return true
 }
 
-func jsonBody(w http.ResponseWriter, v any) {
-	_ = json.NewEncoder(w).Encode(v)
+type listResponse[T any] struct {
+	NextPageToken *string `json:"next_page_token"`
+	Items         []T     `json:"items"`
+}
+
+func newListResponse[T any](items []T) listResponse[T] {
+	return listResponse[T]{Items: items}
 }
