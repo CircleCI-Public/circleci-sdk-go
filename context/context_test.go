@@ -2,17 +2,16 @@ package context_test
 
 import (
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
-	"gotest.tools/v3/skip"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	sdkcontext "github.com/CircleCI-Public/circleci-sdk-go/context"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
 
 const testTok = "9708df71-aced-497e-b9d0-f12837c72492"
@@ -68,10 +67,7 @@ func TestContextService_List(t *testing.T) {
 }
 
 func TestContextService_List_Integration(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	contextService := sdkcontext.NewContextService(c)
 
 	ctxs, err := contextService.List("circleci/8e4z1Akd74woxagxnvLT5q")
@@ -116,11 +112,7 @@ func TestContextService_Get(t *testing.T) {
 }
 
 func TestContextService_Get_Integration(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	if token == "" {
-		t.Skip("Token not found")
-	}
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	contextService := sdkcontext.NewContextService(c)
 
 	ctx, err := contextService.Get("e51158a2-f59c-4740-9eb4-d20609baa07e")
@@ -178,20 +170,17 @@ func TestContextService_Full(t *testing.T) {
 }
 
 func TestContextService_Full_Integration(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	contextService := sdkcontext.NewContextService(c)
 
 	organizationID := "3ddcf1d1-7f5f-4139-8cef-71ad0921a968"
 
 	var ctxCreated *sdkcontext.Context
-	t.Run("create", func(t *testing.T) {
+	assert.Assert(t, t.Run("create", func(t *testing.T) {
 		var err error
 		ctxCreated, err = contextService.Create(organizationID, "Test ctx")
 		assert.Assert(t, err)
-	})
+	}))
 
 	t.Run("delete", func(t *testing.T) {
 		err := contextService.Delete(ctxCreated.ID)
@@ -206,42 +195,25 @@ func TestContextService_Full_Integration(t *testing.T) {
 }
 
 func TestListRestrictions(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	contextService := sdkcontext.NewContextService(c)
 
 	restrictions, err := contextService.GetRestrictions("e51158a2-f59c-4740-9eb4-d20609baa07e")
-
-	if err != nil {
-		t.Log(err)
-		t.Error("Error getting restrictions")
-		t.FailNow()
-	}
+	assert.Assert(t, err)
 	t.Log(restrictions)
 }
 
 func TestFullRestrictions(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	contextService := sdkcontext.NewContextService(c)
 
 	contextID := "e51158a2-f59c-4740-9eb4-d20609baa07e"
 	restriction, err := contextService.CreateRestriction(contextID, "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33", "project")
-	if err != nil {
-		t.Log(err)
-		t.Error("Error creating context restriction")
-		t.FailNow()
-	}
-	idNewRestriction := restriction.ID
+	assert.Assert(t, err)
 	t.Log(restriction)
+
+	idNewRestriction := restriction.ID
+
 	err = contextService.DeleteRestriction(contextID, idNewRestriction)
-	if err != nil {
-		t.Log(err)
-		t.Error("Error deleting restriction")
-		t.FailNow()
-	}
+	assert.Assert(t, err)
 }

@@ -2,18 +2,17 @@ package env_test
 
 import (
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
-	"gotest.tools/v3/skip"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/env"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
 
 const testTok = "0c3f30ae-66c3-40c9-9674-db6774f657fb"
@@ -56,10 +55,7 @@ func TestEnvService_List(t *testing.T) {
 }
 
 func TestEnvService_List_Integration(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
 	envs, err := envService.List("e51158a2-f59c-4740-9eb4-d20609baa07e")
@@ -129,10 +125,7 @@ func TestEnvService_Create(t *testing.T) {
 }
 
 func TestEnvService_Create_Integration(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
 	contextID := "e51158a2-f59c-4740-9eb4-d20609baa07e"
