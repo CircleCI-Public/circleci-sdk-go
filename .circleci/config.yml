@@ -38,7 +38,7 @@ jobs:
       - setup
       - go/with-cache:
           steps:
-            - run: task ci:test
+            - run: CIRCLE_TOKEN="${CCIPERSONALACCESSTOKEN_ASKSEC_310:-}" task ci:test
       - store_results
 
 

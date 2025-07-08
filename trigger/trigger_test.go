@@ -1,15 +1,13 @@
 package trigger
 
 import (
-	"os"
 	"testing"
 
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
-	"gotest.tools/v3/skip"
 
-	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
+	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
 
 const (
@@ -18,10 +16,7 @@ const (
 )
 
 func TestListTrigger(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
 	trs, err := triggerService.List(knownProjectID, knownPipelineID)
@@ -31,10 +26,7 @@ func TestListTrigger(t *testing.T) {
 }
 
 func TestFullTriggerNew(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
 	pipelineID := knownPipelineID
@@ -77,10 +69,7 @@ func TestFullTriggerNew(t *testing.T) {
 }
 
 func TestFullTrigger(t *testing.T) {
-	token := os.Getenv("CCIPERSONALACCESSTOKEN_ASKSEC_310")
-	skip.If(t, token == "", "Token not found")
-
-	c := client.NewClient("https://circleci.com/api/v2", token)
+	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
 	pipelineID := "bee796a0-7ec2-478c-ab87-6a5039d7a216"
