@@ -3,6 +3,7 @@ package env
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 	"github.com/CircleCI-Public/circleci-sdk-go/common"
@@ -10,10 +11,10 @@ import (
 
 //nolint:revive
 type EnvVariable struct {
-	Variable  string `json:"variable,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
-	ContextId string `json:"context_id,omitempty"`
-	CreatedAt string `json:"created_at,omitempty"`
+	Variable  string    `json:"variable,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ContextId string    `json:"context_id,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
 //nolint:revive

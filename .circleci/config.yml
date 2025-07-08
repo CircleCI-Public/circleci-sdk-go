@@ -48,3 +48,5 @@ workflows:
       - lint
       - test:
           context: CircleCITestOrg-ccipat
+      - test:
+          name: test_no_secrets
