@@ -7,6 +7,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-retryablehttp v0.7.8
+	github.com/mr-tron/base58 v1.2.0
 	gotest.tools/v3 v3.5.2
 )
 

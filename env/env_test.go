@@ -26,7 +26,7 @@ func TestEnvService_List(t *testing.T) {
 	envService := env.NewEnvService(c)
 
 	o, err := fc.AddOrg(fakecircle.NewOrg{
-		Type: "circleci",
+		Type: fakecircle.TypeCircleCI,
 		Name: "test org",
 	})
 	assert.Assert(t, err)
@@ -72,7 +72,7 @@ func TestEnvService_Create(t *testing.T) {
 	envService := env.NewEnvService(c)
 
 	o, err := fc.AddOrg(fakecircle.NewOrg{
-		Type: "circleci",
+		Type: fakecircle.TypeCircleCI,
 		Name: "test org",
 	})
 	assert.Assert(t, err)

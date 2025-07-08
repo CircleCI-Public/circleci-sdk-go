@@ -29,8 +29,8 @@ func TestContextService_List(t *testing.T) {
 	t.Run("add_org", func(t *testing.T) {
 		var err error
 		o, err = fc.AddOrg(fakecircle.NewOrg{
-			Type: "circleci",
-			Name: "8e4z1Akd74woxagxnvLT5q",
+			Type: fakecircle.TypeCircleCI,
+			Name: "test org",
 		})
 		assert.Assert(t, err)
 		orgCtx, err = fc.AddContext(fakecircle.NewContext{
@@ -42,7 +42,7 @@ func TestContextService_List(t *testing.T) {
 
 	t.Run("add_other_org", func(t *testing.T) {
 		o2, err := fc.AddOrg(fakecircle.NewOrg{
-			Type: "circleci",
+			Type: fakecircle.TypeCircleCI,
 			Name: "other",
 		})
 		assert.Assert(t, err)
@@ -54,7 +54,7 @@ func TestContextService_List(t *testing.T) {
 	})
 
 	t.Run("list", func(t *testing.T) {
-		ctxs, err := contextService.List("circleci/8e4z1Akd74woxagxnvLT5q")
+		ctxs, err := contextService.List(o.Slug)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(ctxs, []sdkcontext.Context{
 			{
@@ -89,7 +89,7 @@ func TestContextService_Get(t *testing.T) {
 	t.Run("add_org", func(t *testing.T) {
 		var err error
 		o, err = fc.AddOrg(fakecircle.NewOrg{
-			Type: "circleci",
+			Type: fakecircle.TypeCircleCI,
 			Name: "8e4z1Akd74woxagxnvLT5q",
 		})
 		assert.Assert(t, err)
@@ -132,7 +132,7 @@ func TestContextService_Full(t *testing.T) {
 	t.Run("add_org", func(t *testing.T) {
 		var err error
 		o, err = fc.AddOrg(fakecircle.NewOrg{
-			Type: "circleci",
+			Type: fakecircle.TypeCircleCI,
 			Name: "8e4z1Akd74woxagxnvLT5q",
 		})
 		assert.Assert(t, err)
