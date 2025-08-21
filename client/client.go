@@ -15,6 +15,23 @@ type Client struct {
 	baseURL   string
 	client    *retryablehttp.Client
 	authToken string
+	userAgent string
+}
+
+type Options struct {
+	userAgent string
+}
+
+func NewClientWithOptions(baseURL, authToken string, options *Options) *Client {
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = 10
+
+	return &Client{
+		baseURL:   baseURL,
+		client:    retryClient,
+		authToken: authToken,
+		userAgent: options.userAgent,
+	}
 }
 
 func NewClient(baseURL, authToken string) *Client {
@@ -25,6 +42,7 @@ func NewClient(baseURL, authToken string) *Client {
 		baseURL:   baseURL,
 		client:    retryClient,
 		authToken: authToken,
+		userAgent: "circleci-sdk-go",
 	}
 }
 
@@ -42,6 +60,7 @@ func (c *Client) request(url, method string, body, respBody any) (_ *Response, e
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.userAgent)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Circle-Token", c.authToken)
 
