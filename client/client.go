@@ -18,11 +18,11 @@ type Client struct {
 	userAgent string
 }
 
-type ClientOptions struct {
+type Options struct {
 	userAgent string
 }
 
-func NewClientWithOptions(baseURL, authToken string, options *ClientOptions) *Client {
+func NewClientWithOptions(baseURL, authToken string, options *Options) *Client {
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 10
 
