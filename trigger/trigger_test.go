@@ -42,6 +42,7 @@ func TestFullTriggerNew(t *testing.T) {
 		EventPreset: "all-pushes",
 		ConfigRef:   "main",
 		CheckoutRef: "main",
+		Disabled:    common.Bool(false),
 	}
 	triggerCreated, err := triggerService.Create(newTrigger, projectID, pipelineID)
 	assert.Assert(t, err)
@@ -50,6 +51,7 @@ func TestFullTriggerNew(t *testing.T) {
 	triggerToUpdate := Trigger{
 		Name:        "trigger-updated",
 		Description: "Updated description",
+		Disabled:    common.Bool(true),
 	}
 
 	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
@@ -86,6 +88,7 @@ func TestFullTrigger(t *testing.T) {
 		EventPreset: "all-pushes",
 		ConfigRef:   "main",
 		CheckoutRef: "main",
+		Disabled:    common.Bool(false),
 	}
 	triggerCreated, err := triggerService.Create(newTrigger, projectID, pipelineID)
 	assert.Assert(t, err)
@@ -94,6 +97,7 @@ func TestFullTrigger(t *testing.T) {
 	triggerToUpdate := Trigger{
 		Name:        "trigger-updated",
 		Description: "Updated description",
+		Disabled:    common.Bool(true),
 	}
 
 	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
