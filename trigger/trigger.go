@@ -18,6 +18,7 @@ type Trigger struct {
 	EventSource common.EventSource `json:"event_source,omitzero"`
 	EventName   string             `json:"event_name,omitempty"`
 	EventPreset string             `json:"event_preset,omitempty"`
+	Disabled    *bool              `json:"disabled,omitempty"`
 }
 
 // nolint:revive // introduced before linter
@@ -70,7 +71,7 @@ func (s *TriggerService) Delete(projectID, triggerID string) (err error) {
 }
 
 // Update The new trigger param can only have the esseential values:
-// name, description, event_preset, checkout_ref, config_ref
+// name, description, event_preset, checkout_ref, config_ref, disabled
 // This are the only values that can be updated with this method
 func (s *TriggerService) Update(newTrigger Trigger, projectID, triggerID string) (_ *Trigger, err error) {
 	var trigger Trigger
