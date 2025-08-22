@@ -18,6 +18,7 @@ type Trigger struct {
 	EventSource common.EventSource `json:"event_source,omitzero"`
 	EventName   string             `json:"event_name,omitempty"`
 	EventPreset string             `json:"event_preset,omitempty"`
+	Disabled    *bool              `json:"disabled,omitempty"`
 }
 
 // nolint:revive // introduced before linter
