@@ -10,8 +10,6 @@ import (
 
 type Trigger struct {
 	ID          string             `json:"id,omitempty"`
-	Name        string             `json:"name,omitempty"`
-	Description string             `json:"description,omitempty"`
 	CreatedAt   string             `json:"created_at,omitempty"`
 	CheckoutRef string             `json:"checkout_ref,omitempty"`
 	ConfigRef   string             `json:"config_ref,omitempty"`
