@@ -36,7 +36,7 @@ func TestFullTriggerNew(t *testing.T) {
 		EventSource: common.EventSource{
 			Provider: "webhook",
 			Webhook: common.Webhook{
-				Sender: "Test",
+				Sender: "Test sender",
 			},
 		},
 		EventPreset: "all-pushes",
@@ -49,14 +49,13 @@ func TestFullTriggerNew(t *testing.T) {
 
 	idNewTrigger := triggerCreated.ID
 	triggerToUpdate := Trigger{
-		Name:        "trigger-updated",
-		Description: "Updated description",
-		Disabled:    common.Bool(true),
+		EventName: "New event name",
+		Disabled:  common.Bool(true),
 	}
 
 	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
-	assert.Check(t, cmp.Equal(triggerUpdated.Description, "Updated description"))
+	assert.Check(t, cmp.Equal(triggerUpdated.EventName, "New event name"))
 
 	triggerFetched, err := triggerService.Get(projectID, idNewTrigger)
 	assert.Assert(t, err)
@@ -77,8 +76,6 @@ func TestFullTrigger(t *testing.T) {
 	pipelineID := "bee796a0-7ec2-478c-ab87-6a5039d7a216"
 	projectID := "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
 	newTrigger := Trigger{
-		Name:        "test-trigger",
-		Description: "Test trigger from SDK",
 		EventSource: common.EventSource{
 			Provider: "github_app",
 			Repo: common.Repo{
@@ -95,14 +92,11 @@ func TestFullTrigger(t *testing.T) {
 
 	idNewTrigger := triggerCreated.ID
 	triggerToUpdate := Trigger{
-		Name:        "trigger-updated",
-		Description: "Updated description",
-		Disabled:    common.Bool(true),
+		Disabled: common.Bool(true),
 	}
 
-	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
+	_, err = triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
-	assert.Check(t, cmp.Equal(triggerUpdated.Description, "Updated description"))
 
 	triggerFetched, err := triggerService.Get(projectID, idNewTrigger)
 	assert.Assert(t, err)
