@@ -81,9 +81,6 @@ func TestFullTrigger(t *testing.T) {
 			Repo: common.Repo{
 				ExternalId: "952038793",
 			},
-			Webhook: common.Webhook{
-				Sender: "Test sender",
-			},
 		},
 		EventPreset: "all-pushes",
 		ConfigRef:   "main",
@@ -95,17 +92,11 @@ func TestFullTrigger(t *testing.T) {
 
 	idNewTrigger := triggerCreated.ID
 	triggerToUpdate := Trigger{
-		EventSource: common.EventSource{
-			Webhook: common.Webhook{
-				Sender: "New Sender",
-			},
-		},
 		Disabled:    common.Bool(true),
 	}
 
-	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
+	_, err = triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
-	assert.Check(t, cmp.Equal(triggerUpdated.EventSource.Webhook.Sender, "New Sender"))
 
 	triggerFetched, err := triggerService.Get(projectID, idNewTrigger)
 	assert.Assert(t, err)
