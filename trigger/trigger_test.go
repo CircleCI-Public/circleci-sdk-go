@@ -50,7 +50,7 @@ func TestFullTriggerNew(t *testing.T) {
 	idNewTrigger := triggerCreated.ID
 	triggerToUpdate := Trigger{
 		EventName: "New event name",
-		Disabled:    common.Bool(true),
+		Disabled:  common.Bool(true),
 	}
 
 	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
@@ -92,7 +92,7 @@ func TestFullTrigger(t *testing.T) {
 
 	idNewTrigger := triggerCreated.ID
 	triggerToUpdate := Trigger{
-		Disabled:    common.Bool(true),
+		Disabled: common.Bool(true),
 	}
 
 	_, err = triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
