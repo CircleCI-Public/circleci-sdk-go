@@ -9,7 +9,7 @@ type Repo struct {
 
 type Webhook struct {
 	// nolint:revive // introduced before linter
-	Url    string `json:"url,omitempty"`
+	// Url    string `json:"url,omitempty"`
 	Sender string `json:"sender,omitempty"`
 }
 
