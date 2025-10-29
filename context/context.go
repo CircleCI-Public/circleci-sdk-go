@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -33,21 +34,21 @@ func NewContextService(c *client.Client) *ContextService {
 	return &ContextService{client: c}
 }
 
-func (s *ContextService) Get(contextID string) (_ *Context, err error) {
+func (s *ContextService) Get(ctx context.Context, contextID string) (_ *Context, err error) {
 	var context Context
-	_, err = s.client.RequestHelper(http.MethodGet, "/context/"+contextID, nil, &context)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, "/context/"+contextID, nil, &context)
 	if err != nil {
 		return nil, err
 	}
 	return &context, nil
 }
 
-func (s *ContextService) List(organizationSlug string) (_ []Context, err error) {
+func (s *ContextService) List(ctx context.Context, organizationSlug string) (_ []Context, err error) {
 	var nextPageToken string
 	var contextList []Context
 	for {
 		var response common.PaginatedResponse[Context]
-		_, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", organizationSlug, nextPageToken), nil, &response)
+		_, err := s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/context?owner-slug=%s&page-token=%s", organizationSlug, nextPageToken), nil, &response)
 		if err != nil {
 			return nil, err
 		}
@@ -61,7 +62,7 @@ func (s *ContextService) List(organizationSlug string) (_ []Context, err error) 
 	return contextList, nil
 }
 
-func (s *ContextService) Create(organizationID, name string) (_ *Context, err error) {
+func (s *ContextService) Create(ctx context.Context, organizationID, name string) (_ *Context, err error) {
 	payload := map[string]any{
 		"name": name,
 		"owner": map[string]string{
@@ -70,24 +71,24 @@ func (s *ContextService) Create(organizationID, name string) (_ *Context, err er
 		},
 	}
 	var context Context
-	_, err = s.client.RequestHelper(http.MethodPost, "/context", payload, &context)
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, "/context", payload, &context)
 	if err != nil {
 		return nil, err
 	}
 	return &context, nil
 }
 
-func (s *ContextService) Delete(contextID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, "/context/"+contextID, nil, nil)
+func (s *ContextService) Delete(ctx context.Context, contextID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, "/context/"+contextID, nil, nil)
 	return err
 }
 
-func (s *ContextService) GetRestrictions(contextID string) (_ []ContextRestriction, err error) {
+func (s *ContextService) GetRestrictions(ctx context.Context, contextID string) (_ []ContextRestriction, err error) {
 	var nextPageToken string
 	var contextRestrictionList []ContextRestriction
 	for {
 		var response common.PaginatedResponse[ContextRestriction]
-		_, err := s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context/%s/restrictions?page-token=%s", contextID, nextPageToken), nil, &response)
+		_, err := s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/context/%s/restrictions?page-token=%s", contextID, nextPageToken), nil, &response)
 		if err != nil {
 			return nil, err
 		}
@@ -100,21 +101,21 @@ func (s *ContextService) GetRestrictions(contextID string) (_ []ContextRestricti
 	return contextRestrictionList, nil
 }
 
-func (s *ContextService) DeleteRestriction(contextID, restrictionID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/context/%s/restrictions/%s", contextID, restrictionID), nil, nil)
+func (s *ContextService) DeleteRestriction(ctx context.Context, contextID, restrictionID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/context/%s/restrictions/%s", contextID, restrictionID), nil, nil)
 	return err
 }
 
 // CreateRestriction - context_id is the context this restriction applies to
 // restriction_type is the type of resource this restrictions is related, either organization or project
 // restriction_value is the id of the resource this restriction is related, the id of the org or project
-func (s *ContextService) CreateRestriction(contextID, restrictionValue, restrictionType string) (_ *ContextRestriction, err error) {
+func (s *ContextService) CreateRestriction(ctx context.Context, contextID, restrictionValue, restrictionType string) (_ *ContextRestriction, err error) {
 	payload := map[string]string{
 		"restriction_value": restrictionValue,
 		"restriction_type":  restrictionType,
 	}
 	var contextRestriction ContextRestriction
-	_, err = s.client.RequestHelper(http.MethodPost, "/context/"+contextID+"/restrictions", payload, &contextRestriction)
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, "/context/"+contextID+"/restrictions", payload, &contextRestriction)
 	if err != nil {
 		return nil, err
 	}

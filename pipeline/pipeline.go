@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -31,9 +32,9 @@ func NewPipelineService(c *client.Client) *PipelineService {
 	return &PipelineService{client: c}
 }
 
-func (s *PipelineService) Get(projectID, pipelineID string) (_ *Pipeline, err error) {
+func (s *PipelineService) Get(ctx context.Context, projectID, pipelineID string) (_ *Pipeline, err error) {
 	var pipeline Pipeline
-	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil, &pipeline)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil, &pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +42,9 @@ func (s *PipelineService) Get(projectID, pipelineID string) (_ *Pipeline, err er
 	return &pipeline, nil
 }
 
-func (s *PipelineService) List(projectID string) (_ []Pipeline, err error) {
+func (s *PipelineService) List(ctx context.Context, projectID string) (_ []Pipeline, err error) {
 	var pipelineItems PipelineItems
-	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), nil, &pipelineItems)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), nil, &pipelineItems)
 	if err != nil {
 		return nil, err
 	}
@@ -51,9 +52,9 @@ func (s *PipelineService) List(projectID string) (_ []Pipeline, err error) {
 	return pipelineItems.Items, nil
 }
 
-func (s *PipelineService) Create(newPipeline Pipeline, projectID string) (_ *Pipeline, err error) {
+func (s *PipelineService) Create(ctx context.Context, newPipeline Pipeline, projectID string) (_ *Pipeline, err error) {
 	var pipeline Pipeline
-	_, err = s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), newPipeline, &pipeline)
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions", projectID), newPipeline, &pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -61,17 +62,17 @@ func (s *PipelineService) Create(newPipeline Pipeline, projectID string) (_ *Pip
 	return &pipeline, nil
 }
 
-func (s *PipelineService) Delete(projectID, pipelineID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil, nil)
+func (s *PipelineService) Delete(ctx context.Context, projectID, pipelineID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), nil, nil)
 	return err
 }
 
 // Update - The new pipeline param can only have the eseential values:
 // name, description, config_source.file_path, checkout_source.provider, checkout_source.repo.external_id
 // This are the only values that can be updated with this method, and the objet passed can only have these defined
-func (s *PipelineService) Update(newPipeline Pipeline, projectID, pipelineID string) (_ *Pipeline, err error) {
+func (s *PipelineService) Update(ctx context.Context, newPipeline Pipeline, projectID, pipelineID string) (_ *Pipeline, err error) {
 	var pipeline Pipeline
-	_, err = s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), newPipeline, &pipeline)
+	_, err = s.client.RequestHelper(ctx, http.MethodPatch, fmt.Sprintf("/projects/%s/pipeline-definitions/%s", projectID, pipelineID), newPipeline, &pipeline)
 	if err != nil {
 		return nil, err
 	}

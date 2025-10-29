@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -32,21 +33,21 @@ func NewWebhookService(c *client.Client) *WebhookService {
 	return &WebhookService{client: c}
 }
 
-func (s *WebhookService) Get(webhookID string) (_ *Webhook, err error) {
+func (s *WebhookService) Get(ctx context.Context, webhookID string) (_ *Webhook, err error) {
 	var webhook Webhook
-	_, err = s.client.RequestHelper(http.MethodGet, "/webhook/"+webhookID, nil, &webhook)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, "/webhook/"+webhookID, nil, &webhook)
 	if err != nil {
 		return nil, err
 	}
 	return &webhook, nil
 }
 
-func (s *WebhookService) List(scopeID string) (_ []Webhook, err error) {
+func (s *WebhookService) List(ctx context.Context, scopeID string) (_ []Webhook, err error) {
 	var nextPageToken string
 	var webhookList []Webhook
 	for {
 		var response common.PaginatedResponse[Webhook]
-		_, err = s.client.RequestHelper(http.MethodGet,
+		_, err = s.client.RequestHelper(ctx, http.MethodGet,
 			fmt.Sprintf("/webhook?scope-id=%s&scope-type=project&page-token=%s", scopeID, nextPageToken),
 			nil,
 			&response,
@@ -64,9 +65,9 @@ func (s *WebhookService) List(scopeID string) (_ []Webhook, err error) {
 	return webhookList, nil
 }
 
-func (s *WebhookService) Create(newWebhook Webhook) (_ *Webhook, err error) {
+func (s *WebhookService) Create(ctx context.Context, newWebhook Webhook) (_ *Webhook, err error) {
 	var webhook Webhook
-	_, err = s.client.RequestHelper(http.MethodPost, "/webhook", newWebhook, &webhook)
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, "/webhook", newWebhook, &webhook)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +76,9 @@ func (s *WebhookService) Create(newWebhook Webhook) (_ *Webhook, err error) {
 }
 
 // Update - The scope cannot be updated
-func (s *WebhookService) Update(newWebhook Webhook, webhookID string) (_ *Webhook, err error) {
+func (s *WebhookService) Update(ctx context.Context, newWebhook Webhook, webhookID string) (_ *Webhook, err error) {
 	var webhook Webhook
-	_, err = s.client.RequestHelper(http.MethodPut, "/webhook/"+webhookID, newWebhook, &webhook)
+	_, err = s.client.RequestHelper(ctx, http.MethodPut, "/webhook/"+webhookID, newWebhook, &webhook)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (s *WebhookService) Update(newWebhook Webhook, webhookID string) (_ *Webhoo
 	return &webhook, nil
 }
 
-func (s *WebhookService) Delete(webhookID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, "/webhook/"+webhookID, nil, nil)
+func (s *WebhookService) Delete(ctx context.Context, webhookID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, "/webhook/"+webhookID, nil, nil)
 	return err
 }

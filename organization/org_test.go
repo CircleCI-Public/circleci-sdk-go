@@ -1,6 +1,7 @@
 package organization_test
 
 import (
+	"context"
 	"net/http/httptest"
 	"testing"
 
@@ -26,8 +27,9 @@ func TestOrganizationService_Create(t *testing.T) {
 
 	var org *organization.Organization
 	t.Run("create", func(t *testing.T) {
+		ctx := context.TODO()
 		var err error
-		org, err = os.Create("test org name", "github")
+		org, err = os.Create(ctx, "test org name", "github")
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(org, &organization.Organization{
 			Id:      "ignored",
@@ -39,19 +41,21 @@ func TestOrganizationService_Create(t *testing.T) {
 	})
 
 	t.Run("delete", func(t *testing.T) {
-		err := os.Delete(org.Id)
+		ctx := context.TODO()
+		err := os.Delete(ctx, org.Id)
 		assert.Assert(t, err)
 	})
 }
 
 func TestOrganizationService_Create_Integration(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	orgService := organization.NewOrganizationService(c)
 
-	org, err := orgService.Create("SDK_ORG_TEST2", fakecircle.TypeCircleCI)
+	org, err := orgService.Create(ctx, "SDK_ORG_TEST2", fakecircle.TypeCircleCI)
 	assert.Assert(t, err)
 	t.Log(org)
 
-	err = orgService.Delete(org.Id)
+	err = orgService.Delete(ctx, org.Id)
 	assert.Assert(t, err)
 }
