@@ -1,6 +1,7 @@
 package env_test
 
 import (
+	"context"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -41,7 +42,8 @@ func TestEnvService_List(t *testing.T) {
 	assert.Assert(t, err)
 
 	t.Run("list", func(t *testing.T) {
-		envs, err := envService.List(orgCtx.ID.String())
+		ctx := context.TODO()
+		envs, err := envService.List(ctx, orgCtx.ID.String())
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
@@ -55,10 +57,11 @@ func TestEnvService_List(t *testing.T) {
 }
 
 func TestEnvService_List_Integration(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
-	envs, err := envService.List("e51158a2-f59c-4740-9eb4-d20609baa07e")
+	envs, err := envService.List(ctx, "e51158a2-f59c-4740-9eb4-d20609baa07e")
 	assert.Assert(t, err)
 	t.Log(envs)
 }
@@ -83,13 +86,15 @@ func TestEnvService_Create(t *testing.T) {
 	assert.Assert(t, err)
 
 	t.Run("empty", func(t *testing.T) {
-		envs, err := envService.List(orgCtx.ID.String())
+		ctx := context.TODO()
+		envs, err := envService.List(ctx, orgCtx.ID.String())
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Len(envs, 0))
 	})
 
 	t.Run("create", func(t *testing.T) {
-		envCreated, err := envService.Create(orgCtx.ID.String(), "VALUE", "test_sdk")
+		ctx := context.TODO()
+		envCreated, err := envService.Create(ctx, orgCtx.ID.String(), "VALUE", "test_sdk")
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envCreated, &env.EnvVariable{
 			ContextId: orgCtx.ID.String(),
@@ -100,7 +105,8 @@ func TestEnvService_Create(t *testing.T) {
 	})
 
 	t.Run("list", func(t *testing.T) {
-		envs, err := envService.List(orgCtx.ID.String())
+		ctx := context.TODO()
+		envs, err := envService.List(ctx, orgCtx.ID.String())
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
@@ -113,28 +119,31 @@ func TestEnvService_Create(t *testing.T) {
 	})
 
 	t.Run("delete", func(t *testing.T) {
-		err := envService.Delete(orgCtx.ID.String(), "test_sdk")
+		ctx := context.TODO()
+		err := envService.Delete(ctx, orgCtx.ID.String(), "test_sdk")
 		assert.Assert(t, err)
 	})
 
 	t.Run("empty again", func(t *testing.T) {
-		envs, err := envService.List(orgCtx.ID.String())
+		ctx := context.TODO()
+		envs, err := envService.List(ctx, orgCtx.ID.String())
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Len(envs, 0))
 	})
 }
 
 func TestEnvService_Create_Integration(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
 	contextID := "e51158a2-f59c-4740-9eb4-d20609baa07e"
 
-	envCreated, err := envService.Create(contextID, "VALUE", "test_sdk")
+	envCreated, err := envService.Create(ctx, contextID, "VALUE", "test_sdk")
 	assert.Assert(t, err)
 
 	t.Log(envCreated)
 
-	err = envService.Delete(contextID, "test_sdk")
+	err = envService.Delete(ctx, contextID, "test_sdk")
 	assert.Assert(t, err)
 }

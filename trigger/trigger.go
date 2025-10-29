@@ -1,6 +1,7 @@
 package trigger
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -33,9 +34,9 @@ func NewTriggerService(c *client.Client) *TriggerService {
 	return &TriggerService{client: c}
 }
 
-func (s *TriggerService) Get(projectID, triggerID string) (_ *Trigger, err error) {
+func (s *TriggerService) Get(ctx context.Context, projectID, triggerID string) (_ *Trigger, err error) {
 	var trigger Trigger
-	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, &trigger)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, &trigger)
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +44,9 @@ func (s *TriggerService) Get(projectID, triggerID string) (_ *Trigger, err error
 	return &trigger, nil
 }
 
-func (s *TriggerService) List(projectID, pipelineID string) (_ []Trigger, err error) {
+func (s *TriggerService) List(ctx context.Context, projectID, pipelineID string) (_ []Trigger, err error) {
 	var triggerItems TriggerItems
-	_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil, &triggerItems)
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil, &triggerItems)
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +54,9 @@ func (s *TriggerService) List(projectID, pipelineID string) (_ []Trigger, err er
 	return triggerItems.Items, nil
 }
 
-func (s *TriggerService) Create(newTrigger Trigger, projectID, pipelineID string) (_ *Trigger, err error) {
+func (s *TriggerService) Create(ctx context.Context, newTrigger Trigger, projectID, pipelineID string) (_ *Trigger, err error) {
 	var trigger Trigger
-	_, err = s.client.RequestHelper(http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), newTrigger, &trigger)
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), newTrigger, &trigger)
 	if err != nil {
 		return nil, err
 	}
@@ -63,17 +64,17 @@ func (s *TriggerService) Create(newTrigger Trigger, projectID, pipelineID string
 	return &trigger, nil
 }
 
-func (s *TriggerService) Delete(projectID, triggerID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, nil)
+func (s *TriggerService) Delete(ctx context.Context, projectID, triggerID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), nil, nil)
 	return err
 }
 
 // Update The new trigger param can only have the esseential values:
 // name, description, event_preset, checkout_ref, config_ref, disabled
 // This are the only values that can be updated with this method
-func (s *TriggerService) Update(newTrigger Trigger, projectID, triggerID string) (_ *Trigger, err error) {
+func (s *TriggerService) Update(ctx context.Context, newTrigger Trigger, projectID, triggerID string) (_ *Trigger, err error) {
 	var trigger Trigger
-	_, err = s.client.RequestHelper(http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), newTrigger, &trigger)
+	_, err = s.client.RequestHelper(ctx, http.MethodPatch, fmt.Sprintf("/projects/%s/triggers/%s", projectID, triggerID), newTrigger, &trigger)
 	if err != nil {
 		return nil, err
 	}

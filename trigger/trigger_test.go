@@ -1,6 +1,7 @@
 package trigger
 
 import (
+	"context"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -16,16 +17,18 @@ const (
 )
 
 func TestListTrigger(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
-	trs, err := triggerService.List(knownProjectID, knownPipelineID)
+	trs, err := triggerService.List(ctx, knownProjectID, knownPipelineID)
 	assert.Assert(t, err)
 
 	t.Log(trs)
 }
 
 func TestFullTriggerNew(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
@@ -44,7 +47,7 @@ func TestFullTriggerNew(t *testing.T) {
 		CheckoutRef: "main",
 		Disabled:    common.Bool(false),
 	}
-	triggerCreated, err := triggerService.Create(newTrigger, projectID, pipelineID)
+	triggerCreated, err := triggerService.Create(ctx, newTrigger, projectID, pipelineID)
 	assert.Assert(t, err)
 
 	idNewTrigger := triggerCreated.ID
@@ -53,23 +56,24 @@ func TestFullTriggerNew(t *testing.T) {
 		Disabled:  common.Bool(true),
 	}
 
-	triggerUpdated, err := triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
+	triggerUpdated, err := triggerService.Update(ctx, triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
 	assert.Check(t, cmp.Equal(triggerUpdated.EventName, "New event name"))
 
-	triggerFetched, err := triggerService.Get(projectID, idNewTrigger)
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 	t.Log(triggerFetched)
 
-	err = triggerService.Delete(projectID, idNewTrigger)
+	err = triggerService.Delete(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err = triggerService.Get(projectID, idNewTrigger)
+	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
 }
 
 func TestFullTrigger(t *testing.T) {
+	ctx := context.TODO()
 	c := integrationtest.Client(t)
 	triggerService := NewTriggerService(c)
 
@@ -87,7 +91,7 @@ func TestFullTrigger(t *testing.T) {
 		CheckoutRef: "main",
 		Disabled:    common.Bool(false),
 	}
-	triggerCreated, err := triggerService.Create(newTrigger, projectID, pipelineID)
+	triggerCreated, err := triggerService.Create(ctx, newTrigger, projectID, pipelineID)
 	assert.Assert(t, err)
 
 	idNewTrigger := triggerCreated.ID
@@ -95,17 +99,17 @@ func TestFullTrigger(t *testing.T) {
 		Disabled: common.Bool(true),
 	}
 
-	_, err = triggerService.Update(triggerToUpdate, projectID, idNewTrigger)
+	_, err = triggerService.Update(ctx, triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err := triggerService.Get(projectID, idNewTrigger)
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
 	t.Log(triggerFetched)
-	err = triggerService.Delete(projectID, idNewTrigger)
+	err = triggerService.Delete(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err = triggerService.Get(projectID, idNewTrigger)
+	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
 }

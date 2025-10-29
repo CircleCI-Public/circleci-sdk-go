@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -46,7 +47,7 @@ func NewClient(baseURL, authToken string) *Client {
 	}
 }
 
-func (c *Client) request(url, method string, body, respBody any) (_ *Response, err error) {
+func (c *Client) request(ctx context.Context, url, method string, body, respBody any) (_ *Response, err error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -55,7 +56,7 @@ func (c *Client) request(url, method string, body, respBody any) (_ *Response, e
 		}
 		reqBody = bytes.NewBuffer(jsonData)
 	}
-	req, err := retryablehttp.NewRequest(method, url, reqBody)
+	req, err := retryablehttp.NewRequestWithContext(ctx, method, url, reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +100,10 @@ type Response struct {
 }
 
 // RequestHelperAbsolute is the same as RequestHelper but allows to do a request to other APIs
-func (c *Client) RequestHelperAbsolute(method, path string, body, respBody any) (*Response, error) {
-	return c.request(path, method, body, respBody)
+func (c *Client) RequestHelperAbsolute(ctx context.Context, method, path string, body, respBody any) (*Response, error) {
+	return c.request(ctx, path, method, body, respBody)
 }
 
-func (c *Client) RequestHelper(method, path string, reqBody, respBody any) (*Response, error) {
-	return c.request(c.baseURL+path, method, reqBody, respBody)
+func (c *Client) RequestHelper(ctx context.Context, method, path string, reqBody, respBody any) (*Response, error) {
+	return c.request(ctx, c.baseURL+path, method, reqBody, respBody)
 }

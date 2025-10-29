@@ -1,6 +1,7 @@
 package env
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -26,12 +27,12 @@ func NewEnvService(c *client.Client) *EnvService {
 	return &EnvService{client: c}
 }
 
-func (s *EnvService) List(contextID string) (_ []EnvVariable, err error) {
+func (s *EnvService) List(ctx context.Context, contextID string) (_ []EnvVariable, err error) {
 	var nextPageToken string
 	var contextList []EnvVariable
 	for {
 		var response common.PaginatedResponse[EnvVariable]
-		_, err = s.client.RequestHelper(http.MethodGet, fmt.Sprintf("/context/%s/environment-variable?page-token=%s", contextID, nextPageToken), nil, &response)
+		_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/context/%s/environment-variable?page-token=%s", contextID, nextPageToken), nil, &response)
 		if err != nil {
 			return nil, err
 		}
@@ -45,19 +46,19 @@ func (s *EnvService) List(contextID string) (_ []EnvVariable, err error) {
 	return contextList, nil
 }
 
-func (s *EnvService) Create(contextID, value, name string) (_ *EnvVariable, err error) {
+func (s *EnvService) Create(ctx context.Context, contextID, value, name string) (_ *EnvVariable, err error) {
 	payload := map[string]string{
 		"value": value,
 	}
 	var envVariable EnvVariable
-	_, err = s.client.RequestHelper(http.MethodPut, fmt.Sprintf("/context/%s/environment-variable/%s", contextID, name), payload, &envVariable)
+	_, err = s.client.RequestHelper(ctx, http.MethodPut, fmt.Sprintf("/context/%s/environment-variable/%s", contextID, name), payload, &envVariable)
 	if err != nil {
 		return nil, err
 	}
 	return &envVariable, nil
 }
 
-func (s *EnvService) Delete(contextID, name string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, fmt.Sprintf("/context/%s/environment-variable/%s", contextID, name), nil, nil)
+func (s *EnvService) Delete(ctx context.Context, contextID, name string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/context/%s/environment-variable/%s", contextID, name), nil, nil)
 	return err
 }

@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,8 +22,9 @@ func TestClient_RequestHelper(t *testing.T) {
 
 	t.Run("authed", func(t *testing.T) {
 		c := client.NewClient(srv.URL, testTok)
+		ctx := context.TODO()
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/hello", nil, &body)
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/hello", nil, &body)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Equal(res.StatusCode, http.StatusOK))
 		assert.Check(t, cmp.DeepEqual(body, map[string]any{
@@ -31,16 +33,18 @@ func TestClient_RequestHelper(t *testing.T) {
 	})
 
 	t.Run("no_body", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, testTok)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/hello", nil, nil)
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/hello", nil, nil)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Equal(res.StatusCode, http.StatusOK))
 	})
 
 	t.Run("post", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, testTok)
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodPost, "/api/test/echo", map[string]any{
+		res, err := c.RequestHelper(ctx, http.MethodPost, "/api/test/echo", map[string]any{
 			"foo":  "bar",
 			"baz":  "boz",
 			"bool": true,
@@ -55,9 +59,10 @@ func TestClient_RequestHelper(t *testing.T) {
 	})
 
 	t.Run("unauthed", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, "")
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/hello", map[string]any{
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/hello", map[string]any{
 			"foo": "bar",
 		}, &body)
 		assert.Check(t, cmp.ErrorContains(err, "401 Unauthorized"))
@@ -66,9 +71,10 @@ func TestClient_RequestHelper(t *testing.T) {
 	})
 
 	t.Run("bad_token", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, "not-valid")
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/hello", map[string]any{
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/hello", map[string]any{
 			"foo": "bar",
 		}, &body)
 		assert.Check(t, cmp.ErrorContains(err, "401 Unauthorized"))
@@ -77,9 +83,10 @@ func TestClient_RequestHelper(t *testing.T) {
 	})
 
 	t.Run("429", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, testTok)
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/429", nil, &body)
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/429", nil, &body)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Equal(res.StatusCode, http.StatusOK))
 		assert.Check(t, cmp.DeepEqual(body, map[string]any{
@@ -88,9 +95,10 @@ func TestClient_RequestHelper(t *testing.T) {
 	})
 
 	t.Run("500", func(t *testing.T) {
+		ctx := context.TODO()
 		c := client.NewClient(srv.URL, testTok)
 		body := make(map[string]any)
-		res, err := c.RequestHelper(http.MethodGet, "/api/test/500", nil, &body)
+		res, err := c.RequestHelper(ctx, http.MethodGet, "/api/test/500", nil, &body)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Equal(res.StatusCode, http.StatusOK))
 		assert.Check(t, cmp.DeepEqual(body, map[string]any{

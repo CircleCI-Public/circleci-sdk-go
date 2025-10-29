@@ -1,6 +1,7 @@
 package organization
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
@@ -23,9 +24,9 @@ func NewOrganizationService(c *client.Client) *OrganizationService {
 	return &OrganizationService{client: c}
 }
 
-func (s *OrganizationService) Create(name, vcsType string) (org *Organization, err error) {
+func (s *OrganizationService) Create(ctx context.Context, name, vcsType string) (org *Organization, err error) {
 	org = &Organization{}
-	_, err = s.client.RequestHelper(http.MethodPost, "/organization", Organization{
+	_, err = s.client.RequestHelper(ctx, http.MethodPost, "/organization", Organization{
 		Name:    name,
 		VcsType: vcsType,
 	}, org)
@@ -35,7 +36,7 @@ func (s *OrganizationService) Create(name, vcsType string) (org *Organization, e
 	return org, nil
 }
 
-func (s *OrganizationService) Delete(orgID string) (err error) {
-	_, err = s.client.RequestHelper(http.MethodDelete, "/organization/"+orgID, nil, nil)
+func (s *OrganizationService) Delete(ctx context.Context, orgID string) (err error) {
+	_, err = s.client.RequestHelper(ctx, http.MethodDelete, "/organization/"+orgID, nil, nil)
 	return err
 }
