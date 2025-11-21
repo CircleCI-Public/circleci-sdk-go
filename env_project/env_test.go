@@ -11,7 +11,7 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/env_context"
+	"github.com/CircleCI-Public/circleci-sdk-go/env_project"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
@@ -31,25 +31,24 @@ func TestEnvService_List(t *testing.T) {
 		Name: "test org",
 	})
 	assert.Assert(t, err)
-	orgCtx, err := fc.AddContext(fakecircle.NewContext{
+	orgPrj, err := fc.AddProject(fakecircle.NewProject{
 		OrgID: o.ID,
-		Name:  "test context",
+		Name:  "test project",
+
 	})
 	assert.Assert(t, err)
-	_, err = fc.AddContextEnv(orgCtx.ID, fakecircle.NewEnvVarContext{
-		Variable: "FIREBASE_TOKEN",
+	_, err = fc.AddProjectEnv(orgPrj.ID, fakecircle.NewEnvVarProject{
+		Name: "FIREBASE_TOKEN",
 	})
 	assert.Assert(t, err)
 
 	t.Run("list", func(t *testing.T) {
 		ctx := context.TODO()
-		envs, err := envService.List(ctx, orgCtx.ID.String())
+		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
-				ContextId: orgCtx.ID.String(),
-				Variable:  "FIREBASE_TOKEN",
-				UpdatedAt: time.Now(),
+				Name:  "FIREBASE_TOKEN",
 				CreatedAt: time.Now(),
 			},
 		}, cmpopts.EquateApproxTime(time.Second)))
@@ -61,7 +60,7 @@ func TestEnvService_List_Integration(t *testing.T) {
 	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
-	envs, err := envService.List(ctx, "e51158a2-f59c-4740-9eb4-d20609baa07e")
+	envs, err := envService.List(ctx, "circleci/8e4z1Akd74woxagxnvLT5q/CzMcAU8dvQo4FJhyj87QsA")
 	assert.Assert(t, err)
 	t.Log(envs)
 }
@@ -79,40 +78,40 @@ func TestEnvService_Create(t *testing.T) {
 		Name: "test org",
 	})
 	assert.Assert(t, err)
-	orgCtx, err := fc.AddContext(fakecircle.NewContext{
+	orgPrj, err := fc.AddProject(fakecircle.NewProject{
 		OrgID: o.ID,
-		Name:  "test context",
+		Name:  "test project",
 	})
 	assert.Assert(t, err)
 
 	t.Run("empty", func(t *testing.T) {
 		ctx := context.TODO()
-		envs, err := envService.List(ctx, orgCtx.ID.String())
+		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Len(envs, 0))
 	})
 
 	t.Run("create", func(t *testing.T) {
 		ctx := context.TODO()
-		envCreated, err := envService.Create(ctx, orgCtx.ID.String(), "VALUE", "test_sdk")
+		envCreated, err := envService.Create(ctx, orgPrj.Slug, "VALUE", "test_sdk")
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envCreated, &env.EnvVariable{
-			ContextId: orgCtx.ID.String(),
-			Variable:  "test_sdk",
-			UpdatedAt: time.Now(),
+			Name:  "test_sdk",
 			CreatedAt: time.Now(),
+			Value: "VALUE",
 		}, cmpopts.EquateApproxTime(time.Second)))
 	})
 
+	// TODO: GET ONE
+
 	t.Run("list", func(t *testing.T) {
 		ctx := context.TODO()
-		envs, err := envService.List(ctx, orgCtx.ID.String())
+		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
-				ContextId: orgCtx.ID.String(),
-				Variable:  "test_sdk",
-				UpdatedAt: time.Now(),
+				Name:  "test_sdk",
+				Value: "VALUE",
 				CreatedAt: time.Now(),
 			},
 		}, cmpopts.EquateApproxTime(time.Second)))
@@ -120,13 +119,13 @@ func TestEnvService_Create(t *testing.T) {
 
 	t.Run("delete", func(t *testing.T) {
 		ctx := context.TODO()
-		err := envService.Delete(ctx, orgCtx.ID.String(), "test_sdk")
+		err := envService.Delete(ctx, orgPrj.Slug, "test_sdk")
 		assert.Assert(t, err)
 	})
 
 	t.Run("empty again", func(t *testing.T) {
 		ctx := context.TODO()
-		envs, err := envService.List(ctx, orgCtx.ID.String())
+		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
 		assert.Check(t, cmp.Len(envs, 0))
 	})
@@ -137,13 +136,13 @@ func TestEnvService_Create_Integration(t *testing.T) {
 	c := integrationtest.Client(t)
 	envService := env.NewEnvService(c)
 
-	contextID := "e51158a2-f59c-4740-9eb4-d20609baa07e"
+	projectSlug := "circleci/8e4z1Akd74woxagxnvLT5q/CzMcAU8dvQo4FJhyj87QsA"
 
-	envCreated, err := envService.Create(ctx, contextID, "VALUE", "test_sdk")
+	envCreated, err := envService.Create(ctx, projectSlug, "VALUE", "test_sdk")
 	assert.Assert(t, err)
 
 	t.Log(envCreated)
 
-	err = envService.Delete(ctx, contextID, "test_sdk")
+	err = envService.Delete(ctx, projectSlug, "test_sdk")
 	assert.Assert(t, err)
 }

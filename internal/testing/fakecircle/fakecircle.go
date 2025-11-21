@@ -51,6 +51,10 @@ func New(tok string) *Service {
 
 	r.GET("/api/v2/project/:org-type/:org-name/:project-name", c.getProject)
 	r.DELETE("/api/v2/project/:org-type/:org-name/:project-name", c.deleteProject)
+	// TODO: GET ONE ENV
+	r.GET("/api/v2/project/:org-type/:org-name/:project-name/envvar", c.getProjectEnv)
+	r.POST("/api/v2/project/:org-type/:org-name/:project-name/envvar", c.postProjectEnv)
+	r.DELETE("/api/v2/project/:org-type/:org-name/:project-name/envvar/:env-var", c.deleteProjectEnv)
 
 	r.GET("/api/v2/context", c.getContextBySlug)
 	r.POST("/api/v2/context", c.postContext)

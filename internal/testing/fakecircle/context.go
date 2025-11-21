@@ -14,19 +14,19 @@ type context struct {
 	ID        uuid.UUID
 	Name      string
 	Org       *org
-	EnvVars   []EnvVar
+	EnvVars   []EnvVarContext
 	CreatedAt time.Time
 }
 
-func (c *context) addEnv(ev NewEnvVar) (EnvVar, error) {
-	if slices.ContainsFunc(c.EnvVars, func(e EnvVar) bool {
+func (c *context) addEnv(ev NewEnvVarContext) (EnvVarContext, error) {
+	if slices.ContainsFunc(c.EnvVars, func(e EnvVarContext) bool {
 		return e.Variable == ev.Variable
 	}) {
-		return EnvVar{}, errDuplicate
+		return EnvVarContext{}, errDuplicate
 	}
 
 	now := time.Now()
-	e := EnvVar{
+	e := EnvVarContext{
 		Variable:  ev.Variable,
 		Value:     ev.Value,
 		UpdatedAt: now,
@@ -37,7 +37,7 @@ func (c *context) addEnv(ev NewEnvVar) (EnvVar, error) {
 }
 
 func (c *context) deleteEnv(ev string) {
-	c.EnvVars = slices.DeleteFunc(c.EnvVars, func(e EnvVar) bool {
+	c.EnvVars = slices.DeleteFunc(c.EnvVars, func(e EnvVarContext) bool {
 		return e.Variable == ev
 	})
 }
@@ -115,25 +115,25 @@ func (s *Service) deleteEnvContext(id uuid.UUID) error {
 	return nil
 }
 
-type NewEnvVar struct {
+type NewEnvVarContext struct {
 	Variable string
 	Value    string
 }
 
-type EnvVar struct {
+type EnvVarContext struct {
 	Variable  string
 	Value     string
 	UpdatedAt time.Time
 	CreatedAt time.Time
 }
 
-func (s *Service) AddContextEnv(contextID uuid.UUID, ev NewEnvVar) (EnvVar, error) {
+func (s *Service) AddContextEnv(contextID uuid.UUID, ev NewEnvVarContext) (EnvVarContext, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	envCtx, ok := s.contexts[contextID]
 	if !ok {
-		return EnvVar{}, errNotFound
+		return EnvVarContext{}, errNotFound
 	}
 
 	return envCtx.addEnv(ev)
@@ -323,7 +323,7 @@ func (s *Service) putContextEnv(c *gin.Context) {
 		return
 	}
 
-	ev, err := s.AddContextEnv(contextID, NewEnvVar{
+	ev, err := s.AddContextEnv(contextID, NewEnvVarContext{
 		Variable: envVarName,
 		Value:    body.Value,
 	})
