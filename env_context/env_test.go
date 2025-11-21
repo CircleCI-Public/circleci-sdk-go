@@ -11,7 +11,7 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/env"
+	env "github.com/CircleCI-Public/circleci-sdk-go/env_context"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
@@ -36,7 +36,7 @@ func TestEnvService_List(t *testing.T) {
 		Name:  "test context",
 	})
 	assert.Assert(t, err)
-	_, err = fc.AddContextEnv(orgCtx.ID, fakecircle.NewEnvVar{
+	_, err = fc.AddContextEnv(orgCtx.ID, fakecircle.NewEnvVarContext{
 		Variable: "FIREBASE_TOKEN",
 	})
 	assert.Assert(t, err)
