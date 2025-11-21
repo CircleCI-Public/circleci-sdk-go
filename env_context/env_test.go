@@ -11,7 +11,7 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/env_context"
+	env "github.com/CircleCI-Public/circleci-sdk-go/env_context"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )

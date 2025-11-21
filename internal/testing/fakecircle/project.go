@@ -175,24 +175,6 @@ type VcsInfo struct {
 	DefaultBranch string `json:"default_branch"`
 }
 
-func (s *Service) getProjectById(id uuid.UUID) (project, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	envPrj, ok := s.projects[id]
-	if !ok {
-		return project{}, false
-	}
-
-	return project{
-		ID:        envPrj.ID,
-		Name:      envPrj.Name,
-		EnvVars:   slices.Clone(envPrj.EnvVars),
-		Org:       envPrj.Org,
-	}, true
-}
-
-
 func (s *Service) getProject(c *gin.Context) {
 	type response struct {
 		ID   uuid.UUID `json:"id"`
@@ -270,8 +252,8 @@ func (s *Service) deleteProject(c *gin.Context) {
 }
 
 type NewEnvVarProject struct {
-	Name string
-	Value    string
+	Name  string
+	Value string
 }
 
 type EnvVarProject struct {
@@ -302,32 +284,6 @@ func (p *project) deleteEnv(ev string) {
 		return e.Name == ev
 	})
 }
-
-// func (s *Service) deleteEnvProject(orgType, orgName, projectName string) error {
-// 	s.mu.Lock()
-// 	defer s.mu.Unlock()
-
-// 	prj, err := s.projectBySlug(orgType, orgName, projectName)
-// 	if err != nil {
-// 		return errNotFound
-// 	}
-// 	id := prj.ID
-// 	foundPrj, ok := s.projects[id]
-
-// 	if !ok {
-// 		return errNotFound
-// 	}
-
-// 	_, ok = foundPrj.Org.projects[id]
-// 	if !ok {
-// 		return errNotFound
-// 	}
-
-// 	delete(foundPrj.Org.projects, id)
-// 	delete(s.projects, id)
-
-// 	return nil
-// }
 
 func (s *Service) AddProjectEnv(projectID uuid.UUID, ev NewEnvVarProject) (EnvVarProject, error) {
 	s.mu.Lock()
@@ -399,7 +355,7 @@ func (s *Service) getProjectEnv(c *gin.Context) {
 func (s *Service) postProjectEnv(c *gin.Context) {
 	type response struct {
 		Name      string    `json:"name"`
-		Value     string	`json:"value"`
+		Value     string    `json:"value"`
 		CreatedAt time.Time `json:"created-at"`
 	}
 	orgType := c.Param("org-type")
@@ -416,7 +372,7 @@ func (s *Service) postProjectEnv(c *gin.Context) {
 
 	var body struct {
 		Value string `json:"value" binding:"required"`
-		Name string  `json:"name" binding:"required"`
+		Name  string `json:"name" binding:"required"`
 	}
 	err := c.BindJSON(&body)
 	if mapBadRequest(c, "bad request", err) {
@@ -445,11 +401,7 @@ func (s *Service) postProjectEnv(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response{
-		Name:      ev.Name,
-		CreatedAt: ev.CreatedAt,
-		Value:     ev.Value,
-	})
+	c.JSON(http.StatusOK, response(ev))
 }
 
 func (s *Service) deleteProjectEnv(c *gin.Context) {

@@ -54,11 +54,10 @@ func (s *EnvService) Get(ctx context.Context, projectSlug, name string) (_ *EnvV
 	return &envVariable, nil
 }
 
-
 func (s *EnvService) Create(ctx context.Context, projectSlug, value, name string) (_ *EnvVariable, err error) {
 	payload := map[string]string{
 		"value": value,
-		"name": name,
+		"name":  name,
 	}
 	var envVariable EnvVariable
 	_, err = s.client.RequestHelper(ctx, http.MethodPost, fmt.Sprintf("/project/%s/envvar", projectSlug), payload, &envVariable)

@@ -11,7 +11,7 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	"github.com/CircleCI-Public/circleci-sdk-go/env_project"
+	env "github.com/CircleCI-Public/circleci-sdk-go/env_project"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
@@ -34,7 +34,6 @@ func TestEnvService_List(t *testing.T) {
 	orgPrj, err := fc.AddProject(fakecircle.NewProject{
 		OrgID: o.ID,
 		Name:  "test project",
-
 	})
 	assert.Assert(t, err)
 	_, err = fc.AddProjectEnv(orgPrj.ID, fakecircle.NewEnvVarProject{
@@ -48,7 +47,7 @@ func TestEnvService_List(t *testing.T) {
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
-				Name:  "FIREBASE_TOKEN",
+				Name:      "FIREBASE_TOKEN",
 				CreatedAt: time.Now(),
 			},
 		}, cmpopts.EquateApproxTime(time.Second)))
@@ -96,9 +95,9 @@ func TestEnvService_Create(t *testing.T) {
 		envCreated, err := envService.Create(ctx, orgPrj.Slug, "VALUE", "test_sdk")
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envCreated, &env.EnvVariable{
-			Name:  "test_sdk",
+			Name:      "test_sdk",
 			CreatedAt: time.Now(),
-			Value: "VALUE",
+			Value:     "VALUE",
 		}, cmpopts.EquateApproxTime(time.Second)))
 	})
 
@@ -110,8 +109,8 @@ func TestEnvService_Create(t *testing.T) {
 		assert.Assert(t, err)
 		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
 			{
-				Name:  "test_sdk",
-				Value: "VALUE",
+				Name:      "test_sdk",
+				Value:     "VALUE",
 				CreatedAt: time.Now(),
 			},
 		}, cmpopts.EquateApproxTime(time.Second)))
