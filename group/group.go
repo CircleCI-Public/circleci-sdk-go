@@ -10,21 +10,20 @@ import (
 )
 
 type Group struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Description  string `json:"description"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
-type GroupService struct {
+type Service struct {
 	client *client.Client
 }
 
-func NewGroupService(c *client.Client) *GroupService {
-	return &GroupService{client: c}
+func NewService(c *client.Client) *Service {
+	return &Service{client: c}
 }
 
-
-func (s *GroupService) Get(ctx context.Context, orgID, groupID string) (_ *Group, err error) {
+func (s *Service) Get(ctx context.Context, orgID, groupID string) (_ *Group, err error) {
 	var group Group
 	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/organizations/%s/groups/%s", orgID, groupID), nil, &group)
 	if err != nil {
@@ -34,7 +33,7 @@ func (s *GroupService) Get(ctx context.Context, orgID, groupID string) (_ *Group
 	return &group, nil
 }
 
-func (s *GroupService) List(ctx context.Context, orgID string) (_ []Group, err error) {
+func (s *Service) List(ctx context.Context, orgID string) (_ []Group, err error) {
 	var nextPageToken string
 	var groupsList []Group
 	for {
@@ -53,7 +52,7 @@ func (s *GroupService) List(ctx context.Context, orgID string) (_ []Group, err e
 	return groupsList, nil
 }
 
-func (s *GroupService) Create(ctx context.Context, newGroup Group, orgID string) (_ *Group, err error) {
+func (s *Service) Create(ctx context.Context, newGroup Group, orgID string) (_ *Group, err error) {
 	var group Group
 	_, err = s.client.RequestHelper(ctx, http.MethodPost, fmt.Sprintf("/organizations/%s/groups", orgID), newGroup, &group)
 	if err != nil {
@@ -63,7 +62,7 @@ func (s *GroupService) Create(ctx context.Context, newGroup Group, orgID string)
 	return &group, nil
 }
 
-func (s *GroupService) Delete(ctx context.Context, orgID, groupID string) (err error) {
+func (s *Service) Delete(ctx context.Context, orgID, groupID string) (err error) {
 	_, err = s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/organizations/%s/groups/%s", orgID, groupID), nil, nil)
 	return err
 }

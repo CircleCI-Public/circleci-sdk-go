@@ -13,7 +13,7 @@ import (
 func TestFullGroup(t *testing.T) {
 	ctx := context.TODO()
 	c := integrationtest.Client(t)
-	groupService := NewGroupService(c)
+	Service := NewService(c)
 
 	orgID := "3ddcf1d1-7f5f-4139-8cef-71ad0921a968"
 
@@ -21,19 +21,19 @@ func TestFullGroup(t *testing.T) {
 		Name:        "test-group",
 		Description: "Test group from SDK",
 	}
-	groupCreated, err := groupService.Create(ctx, newGroup, orgID)
+	groupCreated, err := Service.Create(ctx, newGroup, orgID)
 	assert.Assert(t, err)
 
 	idNewGroup := groupCreated.ID
 
-	groupFetched, err := groupService.Get(ctx, orgID, idNewGroup)
+	groupFetched, err := Service.Get(ctx, orgID, idNewGroup)
 	assert.Assert(t, err)
 	assert.Check(t, groupFetched != nil)
 
-	err = groupService.Delete(ctx, orgID, idNewGroup)
+	err = Service.Delete(ctx, orgID, idNewGroup)
 	assert.Assert(t, err)
 
-	groupFetched, err = groupService.Get(ctx, orgID, idNewGroup)
+	groupFetched, err = Service.Get(ctx, orgID, idNewGroup)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(groupFetched))
 }
@@ -41,10 +41,10 @@ func TestFullGroup(t *testing.T) {
 func TestListGroup(t *testing.T) {
 	ctx := context.TODO()
 	c := integrationtest.Client(t)
-	groupService := NewGroupService(c)
+	Service := NewService(c)
 
 	orgID := "3ddcf1d1-7f5f-4139-8cef-71ad0921a968"
-	groups, err := groupService.List(ctx, orgID)
+	groups, err := Service.List(ctx, orgID)
 	assert.Assert(t, err)
 	assert.Assert(t, cmp.Len(groups, 1))
 }
