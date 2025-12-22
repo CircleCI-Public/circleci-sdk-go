@@ -1,4 +1,4 @@
-package env_test
+package env_project_test
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
-	env "github.com/CircleCI-Public/circleci-sdk-go/env_project"
+	"github.com/CircleCI-Public/circleci-sdk-go/env_project"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/fakecircle"
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/testing/integrationtest"
 )
@@ -24,7 +24,7 @@ func TestEnvService_List(t *testing.T) {
 	t.Cleanup(srv.Close)
 
 	c := client.NewClient(srv.URL+"/api/v2", testTok)
-	envService := env.NewEnvService(c)
+	envService := env_project.NewEnvService(c)
 
 	o, err := fc.AddOrg(fakecircle.NewOrg{
 		Type: fakecircle.TypeCircleCI,
@@ -45,7 +45,7 @@ func TestEnvService_List(t *testing.T) {
 		ctx := context.TODO()
 		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
-		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
+		assert.Check(t, cmp.DeepEqual(envs, []env_project.EnvVariable{
 			{
 				Name:      "FIREBASE_TOKEN",
 				CreatedAt: time.Now(),
@@ -57,7 +57,7 @@ func TestEnvService_List(t *testing.T) {
 func TestEnvService_List_Integration(t *testing.T) {
 	ctx := context.TODO()
 	c := integrationtest.Client(t)
-	envService := env.NewEnvService(c)
+	envService := env_project.NewEnvService(c)
 
 	envs, err := envService.List(ctx, "circleci/8e4z1Akd74woxagxnvLT5q/CzMcAU8dvQo4FJhyj87QsA")
 	assert.Assert(t, err)
@@ -70,7 +70,7 @@ func TestEnvService_Create(t *testing.T) {
 	t.Cleanup(srv.Close)
 
 	c := client.NewClient(srv.URL+"/api/v2", testTok)
-	envService := env.NewEnvService(c)
+	envService := env_project.NewEnvService(c)
 
 	o, err := fc.AddOrg(fakecircle.NewOrg{
 		Type: fakecircle.TypeCircleCI,
@@ -94,7 +94,7 @@ func TestEnvService_Create(t *testing.T) {
 		ctx := context.TODO()
 		envCreated, err := envService.Create(ctx, orgPrj.Slug, "VALUE", "test_sdk")
 		assert.Assert(t, err)
-		assert.Check(t, cmp.DeepEqual(envCreated, &env.EnvVariable{
+		assert.Check(t, cmp.DeepEqual(envCreated, &env_project.EnvVariable{
 			Name:      "test_sdk",
 			CreatedAt: time.Now(),
 			Value:     "VALUE",
@@ -107,7 +107,7 @@ func TestEnvService_Create(t *testing.T) {
 		ctx := context.TODO()
 		envs, err := envService.List(ctx, orgPrj.Slug)
 		assert.Assert(t, err)
-		assert.Check(t, cmp.DeepEqual(envs, []env.EnvVariable{
+		assert.Check(t, cmp.DeepEqual(envs, []env_project.EnvVariable{
 			{
 				Name:      "test_sdk",
 				Value:     "VALUE",
@@ -133,7 +133,7 @@ func TestEnvService_Create(t *testing.T) {
 func TestEnvService_Create_Integration(t *testing.T) {
 	ctx := context.TODO()
 	c := integrationtest.Client(t)
-	envService := env.NewEnvService(c)
+	envService := env_project.NewEnvService(c)
 
 	projectSlug := "circleci/8e4z1Akd74woxagxnvLT5q/CzMcAU8dvQo4FJhyj87QsA"
 
