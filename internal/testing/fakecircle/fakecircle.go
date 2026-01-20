@@ -47,7 +47,7 @@ func New(tok string) *Service {
 
 	r.POST("/api/v2/organization", c.postOrganization)
 	r.DELETE("/api/v2/organization/:org-id", c.deleteOrganization)
-	r.GET("/api/v2/organization/:org-id", c.getOrganizationById)
+	r.GET("/api/v2/organization/:org-id", c.getOrganizationByID)
 	r.POST("/api/v2/organization/:org-id/project", c.postProject)
 
 	r.GET("/api/v2/project/:org-type/:org-name/:project-name", c.getProject)

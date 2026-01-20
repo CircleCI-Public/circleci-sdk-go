@@ -197,7 +197,7 @@ func (s *Service) deleteOrganization(c *gin.Context) {
 	msg(c, http.StatusOK, "ok")
 }
 
-func (s *Service) getOrganizationById(c *gin.Context) {
+func (s *Service) getOrganizationByID(c *gin.Context) {
 	type response struct {
 		ID      uuid.UUID `json:"id"`
 		Name    string    `json:"name"`
