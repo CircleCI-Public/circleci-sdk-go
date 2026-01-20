@@ -196,3 +196,29 @@ func (s *Service) deleteOrganization(c *gin.Context) {
 
 	msg(c, http.StatusOK, "ok")
 }
+
+func (s *Service) getOrganizationByID(c *gin.Context) {
+	type response struct {
+		ID      uuid.UUID `json:"id"`
+		Name    string    `json:"name"`
+		VcsType string    `json:"vcs_type"`
+		Slug    string    `json:"slug"`
+	}
+
+	id, err := uuid.Parse(c.Param("org-id"))
+	if mapBadRequest(c, "bad org ID", err) {
+		return
+	}
+
+	o, ok := s.orgs[id]
+	if !ok {
+		return
+	}
+
+	c.JSON(http.StatusOK, response{
+		ID:      o.id,
+		Name:    o.name,
+		VcsType: o.typ,
+		Slug:    fmtOrgSlug(o.typ, o.id, o.name),
+	})
+}
