@@ -37,12 +37,12 @@ func (s *OrganizationService) Create(ctx context.Context, name, vcsType string) 
 }
 
 func (s *OrganizationService) Get(ctx context.Context, orgID string) (*Organization, error) {
-	var org Organization
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/organization/"+orgID, nil, &org)
+	org := &Organization{}
+	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/organization/"+orgID, nil, org)
 	if err != nil {
 		return nil, err
 	}
-	return &org, nil
+	return org, nil
 }
 
 func (s *OrganizationService) Delete(ctx context.Context, orgID string) (err error) {

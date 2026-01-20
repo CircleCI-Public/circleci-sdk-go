@@ -40,6 +40,13 @@ func TestOrganizationService_Create(t *testing.T) {
 		assert.Check(t, org.Id != "")
 	})
 
+	t.Run("get", func(t *testing.T) {
+		ctx := context.TODO()
+		organization, err := os.Get(ctx, org.Id)
+		assert.Assert(t, err)
+		assert.Assert(t, organization.Id == org.Id)
+	})
+
 	t.Run("delete", func(t *testing.T) {
 		ctx := context.TODO()
 		err := os.Delete(ctx, org.Id)
