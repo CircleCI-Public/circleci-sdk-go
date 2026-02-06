@@ -9,6 +9,8 @@ import (
 	"github.com/CircleCI-Public/circleci-sdk-go/client"
 )
 
+const runnerAPIBaseURL = "https://runner.circleci.com"
+
 // Runner represents a self-hosted runner instance.
 type Runner struct {
 	Name           string `json:"name,omitempty"`
@@ -99,7 +101,7 @@ func (s *Service) ListRunners(ctx context.Context, params ListRunnersParams) ([]
 	}
 
 	var runners []Runner
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/api/v3/runner"+query, nil, &runners)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, runnerAPIBaseURL+"/api/v3/runner"+query, nil, &runners)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +126,7 @@ func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID stri
 	}
 
 	var resourceClasses []ResourceClass
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/api/v3/runner/resource"+query, nil, &resourceClasses)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, runnerAPIBaseURL+"/api/v3/runner/resource"+query, nil, &resourceClasses)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +137,7 @@ func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID stri
 // CreateResourceClass creates a new runner resource class.
 func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceClassRequest) (*ResourceClass, error) {
 	var resourceClass ResourceClass
-	_, err := s.client.RequestHelper(ctx, http.MethodPost, "/api/v3/runner/resource", req, &resourceClass)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, runnerAPIBaseURL+"/api/v3/runner/resource", req, &resourceClass)
 	if err != nil {
 		return nil, err
 	}
@@ -146,12 +148,12 @@ func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceCla
 // DeleteResourceClass deletes a resource class by ID.
 // If force is true, the resource class will be deleted even if it has associated tokens.
 func (s *Service) DeleteResourceClass(ctx context.Context, id string, force bool) error {
-	path := fmt.Sprintf("/api/v3/runner/resource/%s", id)
+	path := fmt.Sprintf("%s/api/v3/runner/resource/%s", runnerAPIBaseURL, id)
 	if force {
 		path += "/force"
 	}
 
-	_, err := s.client.RequestHelper(ctx, http.MethodDelete, path, nil, nil)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodDelete, path, nil, nil)
 	return err
 }
 
@@ -168,7 +170,7 @@ func (s *Service) ListTokens(ctx context.Context, resourceClass string) ([]Token
 	}
 
 	var tokens []Token
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/api/v3/runner/token"+query, nil, &tokens)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, runnerAPIBaseURL+"/api/v3/runner/token"+query, nil, &tokens)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +182,7 @@ func (s *Service) ListTokens(ctx context.Context, resourceClass string) ([]Token
 // The token value is only returned in the response and cannot be retrieved later.
 func (s *Service) CreateToken(ctx context.Context, req CreateTokenRequest) (*Token, error) {
 	var token Token
-	_, err := s.client.RequestHelper(ctx, http.MethodPost, "/api/v3/runner/token", req, &token)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, runnerAPIBaseURL+"/api/v3/runner/token", req, &token)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +192,7 @@ func (s *Service) CreateToken(ctx context.Context, req CreateTokenRequest) (*Tok
 
 // DeleteToken deletes a runner token by ID.
 func (s *Service) DeleteToken(ctx context.Context, id string) error {
-	_, err := s.client.RequestHelper(ctx, http.MethodDelete, fmt.Sprintf("/api/v3/runner/token/%s", id), nil, nil)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodDelete, fmt.Sprintf("%s/api/v3/runner/token/%s", runnerAPIBaseURL, id), nil, nil)
 	return err
 }
 
@@ -207,7 +209,7 @@ func (s *Service) GetUnclaimedTaskCount(ctx context.Context, resourceClass strin
 	}
 
 	var count UnclaimedTaskCount
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/api/v3/runner/tasks"+query, nil, &count)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, runnerAPIBaseURL+"/api/v3/runner/tasks"+query, nil, &count)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +230,7 @@ func (s *Service) GetRunningTaskCount(ctx context.Context, resourceClass string)
 	}
 
 	var count RunningTaskCount
-	_, err := s.client.RequestHelper(ctx, http.MethodGet, "/api/v3/runner/tasks/running"+query, nil, &count)
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, runnerAPIBaseURL+"/api/v3/runner/tasks/running"+query, nil, &count)
 	if err != nil {
 		return nil, err
 	}
