@@ -69,31 +69,6 @@ type RunningTaskCount struct {
 	RunningRunnerTasks int `json:"running_runner_tasks"`
 }
 
-// ClaimTaskRequest contains the parameters for claiming a task.
-type ClaimTaskRequest struct {
-	Hostname string `json:"hostname"`
-	IP       string `json:"ip"`
-	Name     string `json:"name"`
-	Version  string `json:"version"`
-}
-
-// ClaimTaskResponse contains the response from claiming a task.
-type ClaimTaskResponse struct {
-	AgentVersion  string `json:"agent_version,omitempty"`
-	Allocation    string `json:"allocation,omitempty"`
-	IsEnterprise  bool   `json:"is_enterprise,omitempty"`
-	ResourceClass string `json:"resource_class,omitempty"`
-	TaskToken     string `json:"task_token,omitempty"`
-	Warning       string `json:"warning,omitempty"`
-}
-
-// UnclaimTaskRequest contains the parameters for unclaiming a task.
-type UnclaimTaskRequest struct {
-	//nolint:revive
-	TaskId    string `json:"task_id"`
-	TaskToken string `json:"task_token"`
-}
-
 // Service provides methods for interacting with the CircleCI Runner Admin API v3.
 type Service struct {
 	client *client.Client
@@ -259,22 +234,4 @@ func (s *Service) GetRunningTaskCount(ctx context.Context, resourceClass string)
 	}
 
 	return &count, nil
-}
-
-// ClaimTask attempts to claim a task for execution by a runner.
-// Returns task details if a task is available, or may return a 204 status if no tasks are available.
-func (s *Service) ClaimTask(ctx context.Context, req ClaimTaskRequest) (*ClaimTaskResponse, error) {
-	var response ClaimTaskResponse
-	_, err := s.client.RequestHelper(ctx, http.MethodPost, "/api/v3/runner/claim", req, &response)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response, nil
-}
-
-// UnclaimTask releases a previously claimed task back to the queue.
-func (s *Service) UnclaimTask(ctx context.Context, req UnclaimTaskRequest) error {
-	_, err := s.client.RequestHelper(ctx, http.MethodPost, "/api/v3/runner/unclaim", req, nil)
-	return err
 }
