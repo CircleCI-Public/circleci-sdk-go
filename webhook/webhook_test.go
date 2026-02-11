@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -29,6 +30,9 @@ func TestFullWebhook(t *testing.T) {
 	}
 	webhookCreated, err := webhookService.Create(ctx, newWebhook)
 	assert.Assert(t, err)
+	assert.Check(t, webhookCreated.CreatedAt != "")
+	assert.Check(t, strings.HasPrefix(webhookCreated.CreatedAt, "2"))
+	assert.Check(t, strings.HasSuffix(webhookCreated.CreatedAt, "Z"))
 
 	idNewWebhook := webhookCreated.Id
 	webhookToUpdate := Webhook{

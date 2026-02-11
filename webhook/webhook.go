@@ -18,8 +18,8 @@ type Webhook struct {
 	//nolint:revive // introduced before linter
 	VerifyTls     *bool        `json:"verify-tls,omitempty"`
 	SigningSecret string       `json:"signing-secret,omitempty"`
-	UpdatedAt     string       `json:"updated-at,omitempty"`
-	CreatedAt     string       `json:"created-at,omitempty"`
+	UpdatedAt     string       `json:"updated_at,omitempty"`
+	CreatedAt     string       `json:"created_at,omitempty"`
 	Scope         common.Scope `json:"scope,omitempty"`
 	Events        []string     `json:"events,omitempty"`
 }
