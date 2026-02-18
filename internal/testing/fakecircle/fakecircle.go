@@ -65,6 +65,8 @@ func New(tok string) *Service {
 	r.PUT("/api/v2/context/:context-id/environment-variable/:env-var", c.putContextEnv)
 	r.DELETE("/api/v2/context/:context-id/environment-variable/:env-var", c.deleteContextEnv)
 
+	c.setupRunnerRoutes(r)
+
 	return c
 }
 
