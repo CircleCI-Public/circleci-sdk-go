@@ -106,7 +106,7 @@ func (s *Service) listResourceClasses(c *gin.Context) {
 
 func (s *Service) createResourceClass(c *gin.Context) {
 	type request struct {
-		OrganizationId string `json:"org_id" binding:"required"`
+		OrganizationID string `json:"org_id" binding:"required"`
 		ResourceClass  string `json:"resource_class" binding:"required"`
 		Description    string `json:"description"`
 	}
@@ -211,7 +211,7 @@ func (s *Service) listTokens(c *gin.Context) {
 
 func (s *Service) createToken(c *gin.Context) {
 	type request struct {
-		OrganizationId string `json:"org_id" binding:"required"`
+		OrganizationID string `json:"org_id" binding:"required"`
 		ResourceClass  string `json:"resource_class" binding:"required"`
 		Nickname       string `json:"nickname" binding:"required"`
 	}
