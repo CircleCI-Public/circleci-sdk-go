@@ -42,14 +42,16 @@ type Token struct {
 
 // CreateResourceClassRequest contains the parameters for creating a resource class.
 type CreateResourceClassRequest struct {
-	ResourceClass string `json:"resource_class"`
-	Description   string `json:"description,omitempty"`
+	OrganizationID string `json:"org_id"`
+	ResourceClass  string `json:"resource_class"`
+	Description    string `json:"description,omitempty"`
 }
 
 // CreateTokenRequest contains the parameters for creating a runner token.
 type CreateTokenRequest struct {
-	ResourceClass string `json:"resource_class"`
-	Nickname      string `json:"nickname"`
+	OrganizationID string `json:"org_id"`
+	ResourceClass  string `json:"resource_class"`
+	Nickname       string `json:"nickname"`
 }
 
 // ListRunnersParams contains filtering parameters for listing runners.

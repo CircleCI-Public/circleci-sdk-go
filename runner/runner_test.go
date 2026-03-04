@@ -32,8 +32,9 @@ func TestFullRunner(t *testing.T) {
 
 	// Create a resource class
 	createReq := runner.CreateResourceClassRequest{
-		ResourceClass: "test-org/test-resource-class",
-		Description:   "Test resource class from SDK",
+		OrganizationID: "some-org",
+		ResourceClass:  "test-org/test-resource-class",
+		Description:    "Test resource class from SDK",
 	}
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
@@ -51,8 +52,9 @@ func TestFullRunner(t *testing.T) {
 
 	// Create a token
 	createTokenReq := runner.CreateTokenRequest{
-		ResourceClass: createReq.ResourceClass,
-		Nickname:      "test-token",
+		OrganizationID: "someOrg",
+		ResourceClass:  createReq.ResourceClass,
+		Nickname:       "test-token",
 	}
 	token, err := service.CreateToken(ctx, createTokenReq)
 	assert.NilError(t, err)
@@ -84,8 +86,9 @@ func TestDeleteResourceClassForce(t *testing.T) {
 
 	// Create a resource class
 	createReq := runner.CreateResourceClassRequest{
-		ResourceClass: "test-org/test-force-delete",
-		Description:   "Test force delete",
+		OrganizationID: "3ddcf1d1-7f5f-4139-8cef-71ad0921a968",
+		ResourceClass:  "test-org/test-force-delete",
+		Description:    "Test force delete",
 	}
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
@@ -95,8 +98,9 @@ func TestDeleteResourceClassForce(t *testing.T) {
 
 	// Create a token
 	createTokenReq := runner.CreateTokenRequest{
-		ResourceClass: createReq.ResourceClass,
-		Nickname:      "test-token-force",
+		OrganizationID: "3ddcf1d1-7f5f-4139-8cef-71ad0921a968",
+		ResourceClass:  createReq.ResourceClass,
+		Nickname:       "test-token-force",
 	}
 	token, err := service.CreateToken(ctx, createTokenReq)
 	assert.NilError(t, err)
@@ -118,8 +122,9 @@ func TestListRunners(t *testing.T) {
 
 	// Create a resource class first
 	createReq := runner.CreateResourceClassRequest{
-		ResourceClass: "test-org/test-runners-list",
-		Description:   "Test runners list",
+		OrganizationID: "3ddcf1d1-7f5f-4139-8cef-71ad0921a968",
+		ResourceClass:  "test-org/test-runners-list",
+		Description:    "Test runners list",
 	}
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
@@ -151,8 +156,9 @@ func TestTaskCounts(t *testing.T) {
 
 	// Create a resource class
 	createReq := runner.CreateResourceClassRequest{
-		ResourceClass: "test-org/test-task-counts",
-		Description:   "Test task counts",
+		OrganizationID: "3ddcf1d1-7f5f-4139-8cef-71ad0921a968",
+		ResourceClass:  "test-org/test-task-counts",
+		Description:    "Test task counts",
 	}
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
@@ -180,8 +186,9 @@ func TestCreateResourceClassDuplicate(t *testing.T) {
 
 	// Create a resource class
 	createReq := runner.CreateResourceClassRequest{
-		ResourceClass: "test-org/duplicate-test",
-		Description:   "First resource class",
+		OrganizationID: "3ddcf1d1-7f5f-4139-8cef-71ad0921a968",
+		ResourceClass:  "test-org/duplicate-test",
+		Description:    "First resource class",
 	}
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
