@@ -1,6 +1,7 @@
 package fakecircle
 
 import (
+	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -55,6 +56,18 @@ func (s *Service) setupRunnerRoutes(r *gin.Engine) {
 	r.GET("/api/v3/runner/tasks/running", s.getRunningTaskCount)
 }
 
+func (s *Service) AddResourceClass(uuid, resourceClassIn, description string) error {
+	if _, exists := resourceClasses[uuid]; exists {
+		return fmt.Errorf("resourceClass with id %s already exists", uuid)
+	}
+	resourceClasses[uuid] = &resourceClass{
+		ID:            uuid,
+		ResourceClass: resourceClassIn,
+		Description:   description,
+	}
+	return nil
+}
+
 func (s *Service) listRunners(c *gin.Context) {
 	resourceClass := c.Query("resource-class")
 	namespace := c.Query("namespace")
@@ -83,17 +96,21 @@ func (s *Service) listResourceClasses(c *gin.Context) {
 	namespace := c.Query("namespace")
 	orgID := c.Query("org-id")
 
-	type response struct {
+	type responseItem struct {
 		ID            string `json:"id"`
 		ResourceClass string `json:"resource_class"`
 		Description   string `json:"description"`
 	}
 
-	filtered := make([]response, 0)
+	type response struct {
+		Items []responseItem `json:"items"`
+	}
+
+	filtered := make([]responseItem, 0)
 	for _, rc := range resourceClasses {
 		// Simple filtering - in a real implementation this would be more sophisticated
 		if namespace != "" || orgID != "" {
-			filtered = append(filtered, response{
+			filtered = append(filtered, responseItem{
 				ID:            rc.ID,
 				ResourceClass: rc.ResourceClass,
 				Description:   rc.Description,
@@ -101,7 +118,11 @@ func (s *Service) listResourceClasses(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, filtered)
+	resp := response{
+		Items: filtered,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 func (s *Service) createResourceClass(c *gin.Context) {
@@ -111,10 +132,14 @@ func (s *Service) createResourceClass(c *gin.Context) {
 		Description    string `json:"description"`
 	}
 
-	type response struct {
+	type responseItem struct {
 		ID            string `json:"id"`
 		ResourceClass string `json:"resource_class"`
 		Description   string `json:"description"`
+	}
+
+	type response struct {
+		Items []responseItem `json:"items"`
 	}
 
 	var body request
@@ -140,10 +165,16 @@ func (s *Service) createResourceClass(c *gin.Context) {
 	}
 	resourceClasses[id] = rc
 
+	items := []responseItem{
+		{
+			ID:            rc.ID,
+			ResourceClass: rc.ResourceClass,
+			Description:   rc.Description,
+		},
+	}
+
 	c.JSON(http.StatusOK, response{
-		ID:            rc.ID,
-		ResourceClass: rc.ResourceClass,
-		Description:   rc.Description,
+		Items: items,
 	})
 }
 

@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/mr-tron/base58 v1.2.0
+	github.com/pkg/errors v0.9.1
 	gotest.tools/v3 v3.5.2
 )
 

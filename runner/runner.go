@@ -22,11 +22,16 @@ type Runner struct {
 	LastUsed       string `json:"last_used,omitempty"`
 }
 
+// ResourceClassItems represents a set of resource classes.
+type ResourceClassItems struct {
+	Items []ResourceClass `json:"items"`
+}
+
 // ResourceClass represents a runner resource class configuration.
 type ResourceClass struct {
 	//nolint:revive
-	Id            string `json:"id,omitempty"`
-	ResourceClass string `json:"resource_class,omitempty"`
+	Id            string `json:"id"`
+	ResourceClass string `json:"resource_class"`
 	Description   string `json:"description,omitempty"`
 }
 
@@ -124,7 +129,7 @@ func (s *Service) ListRunners(ctx context.Context, params ListRunnersParams) ([]
 
 // ListResourceClasses returns a list of resource classes filtered by namespace and/or organization ID.
 // At least one filter parameter should be provided.
-func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID string) ([]ResourceClass, error) {
+func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID string) (*ResourceClassItems, error) {
 	values := url.Values{}
 	if namespace != "" {
 		values.Add("namespace", namespace)
@@ -138,24 +143,24 @@ func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID stri
 		query = "?" + values.Encode()
 	}
 
-	var resourceClasses []ResourceClass
-	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, s.baseURL+"/api/v3/runner/resource"+query, nil, &resourceClasses)
+	var resourceClassItems ResourceClassItems
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, s.baseURL+"/api/v3/runner/resource"+query, nil, &resourceClassItems)
 	if err != nil {
 		return nil, err
 	}
 
-	return resourceClasses, nil
+	return &resourceClassItems, nil
 }
 
 // CreateResourceClass creates a new runner resource class.
-func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceClassRequest) (*ResourceClass, error) {
-	var resourceClass ResourceClass
-	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, s.baseURL+"/api/v3/runner/resource", req, &resourceClass)
+func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceClassRequest) (*ResourceClassItems, error) {
+	var resourceClassItems ResourceClassItems
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, s.baseURL+"/api/v3/runner/resource", req, &resourceClassItems)
 	if err != nil {
 		return nil, err
 	}
 
-	return &resourceClass, nil
+	return &resourceClassItems, nil
 }
 
 // DeleteResourceClass deletes a resource class by ID.
