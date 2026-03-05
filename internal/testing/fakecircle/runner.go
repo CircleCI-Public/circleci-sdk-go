@@ -215,6 +215,10 @@ func (s *Service) listTokens(c *gin.Context) {
 		CreatedAt     string `json:"created_at"`
 	}
 
+	type responseItems struct {
+		Items []response `json:"items"`
+	}
+
 	filtered := make([]response, 0)
 	for _, t := range tokens {
 		if resourceClass == "" || t.ResourceClass == resourceClass {
@@ -227,7 +231,11 @@ func (s *Service) listTokens(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, filtered)
+	resp := responseItems{
+		Items: filtered,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 func (s *Service) createToken(c *gin.Context) {
