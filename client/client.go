@@ -86,8 +86,10 @@ func (c *Client) request(ctx context.Context, url, method string, body, respBody
 	}
 
 	if respBody != nil {
-		defer res.Body.Close()
-		b, _ := io.ReadAll(res.Body) // Body is now empty
+		b, err := io.ReadAll(res.Body) // Body is now empty
+		if err != nil {
+			return nil, errors.Wrapf(err, "error reading body: %s", string(b))
+		}
 
 		// Pass the byte slice to Unmarshal instead of the Reader to Decoder
 		if err := json.Unmarshal(b, respBody); err != nil {

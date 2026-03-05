@@ -58,7 +58,7 @@ func (s *Service) setupRunnerRoutes(r *gin.Engine) {
 
 func (s *Service) AddResourceClass(uuid, resourceClassIn, description string) error {
 	if _, exists := resourceClasses[uuid]; exists {
-		return fmt.Errorf("resourceClass with id %s already exists.", uuid)
+		return fmt.Errorf("resourceClass with id %s already exists", uuid)
 	}
 	resourceClasses[uuid] = &resourceClass{
 		ID:            uuid,
