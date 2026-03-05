@@ -132,14 +132,10 @@ func (s *Service) createResourceClass(c *gin.Context) {
 		Description    string `json:"description"`
 	}
 
-	type responseItem struct {
+	type response struct {
 		ID            string `json:"id"`
 		ResourceClass string `json:"resource_class"`
 		Description   string `json:"description"`
-	}
-
-	type response struct {
-		Items []responseItem `json:"items"`
 	}
 
 	var body request
@@ -165,16 +161,10 @@ func (s *Service) createResourceClass(c *gin.Context) {
 	}
 	resourceClasses[id] = rc
 
-	items := []responseItem{
-		{
-			ID:            rc.ID,
-			ResourceClass: rc.ResourceClass,
-			Description:   rc.Description,
-		},
-	}
-
-	c.JSON(http.StatusOK, response{
-		Items: items,
+	c.JSON(http.StatusOK, &response{
+		ID:            rc.ID,
+		ResourceClass: rc.ResourceClass,
+		Description:   rc.Description,
 	})
 }
 
