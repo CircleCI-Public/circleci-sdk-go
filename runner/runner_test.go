@@ -17,6 +17,7 @@ const testToken = "CCIPAT_test-runner-token"
 
 func setupTest(t *testing.T) (*runner.Service, *httptest.Server) {
 	fs := fakecircle.New(testToken)
+	fs.AddResourceClass("uuid", "some resource_class", "some description")
 	srv := httptest.NewServer(fs)
 	t.Cleanup(srv.Close)
 
@@ -39,16 +40,17 @@ func TestFullRunner(t *testing.T) {
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
 	assert.Check(t, resourceClass != nil)
-	assert.Check(t, resourceClass.Id != "")
-	assert.Check(t, resourceClass.ResourceClass == createReq.ResourceClass)
-	assert.Check(t, resourceClass.Description == createReq.Description)
+	assert.Check(t, len(resourceClass.Items) == 1)
+	assert.Check(t, resourceClass.Items[0].Id != "")
+	assert.Check(t, resourceClass.Items[0].ResourceClass == createReq.ResourceClass)
+	assert.Check(t, resourceClass.Items[0].Description == createReq.Description)
 
-	resourceClassID := resourceClass.Id
+	resourceClassID := resourceClass.Items[0].Id
 
 	// List resource classes
 	resourceClasses, err := service.ListResourceClasses(ctx, "test-org", "")
 	assert.NilError(t, err)
-	assert.Check(t, len(resourceClasses) > 0)
+	assert.Check(t, len(resourceClasses.Items) > 0)
 
 	// Create a token
 	createTokenReq := runner.CreateTokenRequest{
@@ -94,7 +96,7 @@ func TestDeleteResourceClassForce(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Check(t, resourceClass != nil)
 
-	resourceClassID := resourceClass.Id
+	resourceClassID := resourceClass.Items[0].Id
 
 	// Create a token
 	createTokenReq := runner.CreateTokenRequest{
@@ -146,7 +148,7 @@ func TestListRunners(t *testing.T) {
 	assert.Check(t, runners != nil)
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
 	assert.NilError(t, err)
 }
 
@@ -176,7 +178,7 @@ func TestTaskCounts(t *testing.T) {
 	assert.Check(t, runningCount.RunningRunnerTasks >= 0)
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
 	assert.NilError(t, err)
 }
 
@@ -199,7 +201,7 @@ func TestCreateResourceClassDuplicate(t *testing.T) {
 	assert.Check(t, cmp.ErrorContains(err, "already exists"))
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
 	assert.NilError(t, err)
 }
 

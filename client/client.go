@@ -8,6 +8,7 @@ import (
 	"io"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/pkg/errors"
 
 	"github.com/CircleCI-Public/circleci-sdk-go/internal/closer"
 )
@@ -85,8 +86,12 @@ func (c *Client) request(ctx context.Context, url, method string, body, respBody
 	}
 
 	if respBody != nil {
-		if err := json.NewDecoder(res.Body).Decode(respBody); err != nil {
-			return nil, err
+		defer res.Body.Close()
+		b, _ := io.ReadAll(res.Body) // Body is now empty
+
+		// Pass the byte slice to Unmarshal instead of the Reader to Decoder
+		if err := json.Unmarshal(b, respBody); err != nil {
+			return nil, errors.Wrapf(err, "error decoding response body: %s", string(b))
 		}
 	}
 
