@@ -70,7 +70,8 @@ func TestFullRunner(t *testing.T) {
 	// List tokens
 	tokens, err := service.ListTokens(ctx, createReq.ResourceClass)
 	assert.NilError(t, err)
-	assert.Check(t, len(tokens) > 0)
+	assert.Check(t, tokens.Items != nil)
+	assert.Check(t, len(tokens.Items) > 0)
 
 	// Delete token
 	err = service.DeleteToken(ctx, tokenID)

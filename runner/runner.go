@@ -35,6 +35,11 @@ type ResourceClass struct {
 	Description   string `json:"description,omitempty"`
 }
 
+// ResourceClassItems represents a set of resource classes.
+type TokenItems struct {
+	Items []Token `json:"items"`
+}
+
 // Token represents a runner authentication token.
 type Token struct {
 	//nolint:revive
@@ -176,7 +181,7 @@ func (s *Service) DeleteResourceClass(ctx context.Context, id string, force bool
 }
 
 // ListTokens returns a list of tokens for a specific resource class.
-func (s *Service) ListTokens(ctx context.Context, resourceClass string) ([]Token, error) {
+func (s *Service) ListTokens(ctx context.Context, resourceClass string) (*TokenItems, error) {
 	values := url.Values{}
 	if resourceClass != "" {
 		values.Add("resource-class", resourceClass)
@@ -187,13 +192,13 @@ func (s *Service) ListTokens(ctx context.Context, resourceClass string) ([]Token
 		query = "?" + values.Encode()
 	}
 
-	var tokens []Token
+	var tokens TokenItems
 	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodGet, s.baseURL+"/api/v3/runner/token"+query, nil, &tokens)
 	if err != nil {
 		return nil, err
 	}
 
-	return tokens, nil
+	return &tokens, nil
 }
 
 // CreateToken creates a new runner token.
