@@ -35,7 +35,7 @@ type ResourceClass struct {
 	Description   string `json:"description,omitempty"`
 }
 
-// ResourceClassItems represents a set of resource classes.
+// TokenItems represents a set of tokens.
 type TokenItems struct {
 	Items []Token `json:"items"`
 }
