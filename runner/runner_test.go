@@ -40,12 +40,11 @@ func TestFullRunner(t *testing.T) {
 	resourceClass, err := service.CreateResourceClass(ctx, createReq)
 	assert.NilError(t, err)
 	assert.Check(t, resourceClass != nil)
-	assert.Check(t, len(resourceClass.Items) == 1)
-	assert.Check(t, resourceClass.Items[0].Id != "")
-	assert.Check(t, resourceClass.Items[0].ResourceClass == createReq.ResourceClass)
-	assert.Check(t, resourceClass.Items[0].Description == createReq.Description)
+	assert.Check(t, resourceClass.Id != "")
+	assert.Check(t, resourceClass.ResourceClass == createReq.ResourceClass)
+	assert.Check(t, resourceClass.Description == createReq.Description)
 
-	resourceClassID := resourceClass.Items[0].Id
+	resourceClassID := resourceClass.Id
 
 	// List resource classes
 	resourceClasses, err := service.ListResourceClasses(ctx, "test-org", "")
@@ -96,7 +95,7 @@ func TestDeleteResourceClassForce(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Check(t, resourceClass != nil)
 
-	resourceClassID := resourceClass.Items[0].Id
+	resourceClassID := resourceClass.Id
 
 	// Create a token
 	createTokenReq := runner.CreateTokenRequest{
@@ -148,7 +147,7 @@ func TestListRunners(t *testing.T) {
 	assert.Check(t, runners != nil)
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
 	assert.NilError(t, err)
 }
 
@@ -178,7 +177,7 @@ func TestTaskCounts(t *testing.T) {
 	assert.Check(t, runningCount.RunningRunnerTasks >= 0)
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
 	assert.NilError(t, err)
 }
 
@@ -201,7 +200,7 @@ func TestCreateResourceClassDuplicate(t *testing.T) {
 	assert.Check(t, cmp.ErrorContains(err, "already exists"))
 
 	// Clean up
-	err = service.DeleteResourceClass(ctx, resourceClass.Items[0].Id, true)
+	err = service.DeleteResourceClass(ctx, resourceClass.Id, true)
 	assert.NilError(t, err)
 }
 

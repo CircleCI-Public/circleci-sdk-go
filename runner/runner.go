@@ -153,14 +153,14 @@ func (s *Service) ListResourceClasses(ctx context.Context, namespace, orgID stri
 }
 
 // CreateResourceClass creates a new runner resource class.
-func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceClassRequest) (*ResourceClassItems, error) {
-	var resourceClassItems ResourceClassItems
-	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, s.baseURL+"/api/v3/runner/resource", req, &resourceClassItems)
+func (s *Service) CreateResourceClass(ctx context.Context, req CreateResourceClassRequest) (*ResourceClass, error) {
+	var resourceClass ResourceClass
+	_, err := s.client.RequestHelperAbsolute(ctx, http.MethodPost, s.baseURL+"/api/v3/runner/resource", req, &resourceClass)
 	if err != nil {
 		return nil, err
 	}
 
-	return &resourceClassItems, nil
+	return &resourceClass, nil
 }
 
 // DeleteResourceClass deletes a resource class by ID.
