@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	knownPipelineID = "bee796a0-7ec2-478c-ab87-6a5039d7a216"
-	knownProjectID  = "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
+	knownPipelineID         = "bee796a0-7ec2-478c-ab87-6a5039d7a216"
+	knownProjectID          = "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
+	knownSchedulePipelineID = "FILL_IN_PIPELINE_DEFINITION_ID_THAT_SUPPORTS_SCHEDULE_TRIGGERS"
 )
 
 func TestListTrigger(t *testing.T) {
@@ -70,6 +71,51 @@ func TestFullTriggerNew(t *testing.T) {
 	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
+}
+
+func TestFullScheduleTrigger(t *testing.T) {
+	ctx := context.TODO()
+	c := integrationtest.Client(t)
+	triggerService := NewTriggerService(c)
+
+	newTrigger := Trigger{
+		EventName:   "Test schedule trigger",
+		CheckoutRef: "main",
+		ConfigRef:   "main",
+		Disabled:    common.Bool(false),
+		EventSource: common.EventSource{
+			Provider: "schedule",
+			Schedule: common.Schedule{
+				CronExpression:   "0 1 * * *",
+				AttributionActor: "current",
+			},
+		},
+		Parameters: map[string]any{"env": "staging"},
+	}
+
+	created, err := triggerService.Create(ctx, newTrigger, knownProjectID, knownSchedulePipelineID)
+	assert.Assert(t, err)
+	assert.Check(t, created.ID != "")
+	assert.Check(t, cmp.Equal(created.EventSource.Provider, "schedule"))
+
+	fetched, err := triggerService.Get(ctx, knownProjectID, created.ID)
+	assert.Assert(t, err)
+	assert.Check(t, cmp.Equal(fetched.EventSource.Schedule.CronExpression, "0 1 * * *"))
+
+	_, err = triggerService.Update(ctx, Trigger{
+		EventName: "Updated schedule trigger",
+		EventSource: common.EventSource{
+			Schedule: common.Schedule{CronExpression: "0 2 * * *"},
+		},
+	}, knownProjectID, created.ID)
+	assert.Assert(t, err)
+
+	err = triggerService.Delete(ctx, knownProjectID, created.ID)
+	assert.Assert(t, err)
+
+	deleted, err := triggerService.Get(ctx, knownProjectID, created.ID)
+	assert.Assert(t, err != nil)
+	assert.Check(t, cmp.Nil(deleted))
 }
 
 func TestFullTrigger(t *testing.T) {
