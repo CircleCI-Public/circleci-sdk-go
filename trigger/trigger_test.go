@@ -72,6 +72,60 @@ func TestFullTriggerNew(t *testing.T) {
 	assert.Check(t, cmp.Nil(triggerFetched))
 }
 
+func TestFullTriggerSchedule(t *testing.T) {
+	ctx := context.TODO()
+	c := integrationtest.Client(t)
+	triggerService := NewTriggerService(c)
+
+	pipelineID := knownPipelineID
+	projectID := knownProjectID
+	newTrigger := Trigger{
+		EventName: "nightly-build",
+		EventSource: common.EventSource{
+			Provider: "schedule",
+			Schedule: common.Schedule{
+				CronExpression:   "0 0 * * *",
+				AttributionActor: "system",
+			},
+		},
+		CheckoutRef: "main",
+		ConfigRef:   "main",
+		Disabled:    common.Bool(false),
+		Parameters:  map[string]any{"deploy_env": "staging"},
+	}
+	triggerCreated, err := triggerService.Create(ctx, newTrigger, projectID, pipelineID)
+	assert.Assert(t, err)
+	assert.Check(t, cmp.Equal(triggerCreated.EventSource.Provider, "schedule"))
+	assert.Check(t, cmp.Equal(triggerCreated.EventSource.Schedule.CronExpression, "0 0 * * *"))
+
+	idNewTrigger := triggerCreated.ID
+	triggerToUpdate := Trigger{
+		EventName: "nightly-build",
+		EventSource: common.EventSource{
+			Schedule: common.Schedule{
+				CronExpression: "0 6 * * *",
+			},
+		},
+		Disabled: common.Bool(true),
+	}
+
+	triggerUpdated, err := triggerService.Update(ctx, triggerToUpdate, projectID, idNewTrigger)
+	assert.Assert(t, err)
+	assert.Check(t, cmp.Equal(triggerUpdated.EventSource.Schedule.CronExpression, "0 6 * * *"))
+
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
+	assert.Assert(t, err)
+	assert.Check(t, cmp.Equal(triggerFetched.EventSource.Provider, "schedule"))
+	assert.Check(t, cmp.Equal(triggerFetched.EventSource.Schedule.CronExpression, "0 6 * * *"))
+
+	err = triggerService.Delete(ctx, projectID, idNewTrigger)
+	assert.Assert(t, err)
+
+	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
+	assert.Assert(t, err != nil)
+	assert.Check(t, cmp.Nil(triggerFetched))
+}
+
 func TestFullTrigger(t *testing.T) {
 	ctx := context.TODO()
 	c := integrationtest.Client(t)
