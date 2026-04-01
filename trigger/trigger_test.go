@@ -14,7 +14,7 @@ import (
 const (
 	knownPipelineID         = "bee796a0-7ec2-478c-ab87-6a5039d7a216"
 	knownProjectID          = "e2e8ae23-57dc-4e95-bc67-633fdeb4ac33"
-	knownSchedulePipelineID = "fefb451c-9966-4b75-b555-d4d94d7116ef"
+	knownSchedulePipelineID = "bee796a0-7ec2-478c-ab87-6a5039d7a216"
 )
 
 func TestListTrigger(t *testing.T) {
