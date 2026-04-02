@@ -26,7 +26,7 @@ type CheckoutSource struct {
 
 type Schedule struct {
 	CronExpression   string `json:"cron_expression,omitempty"`
-	AttributionActor string `json:"attribution_actor,omitempty"`
+	AttributionActor any    `json:"attribution_actor,omitempty"`
 }
 
 type EventSource struct {
