@@ -21,6 +21,7 @@ type Trigger struct {
 	Parameters  map[string]string  `json:"parameters,omitempty"`
 }
 
+// nolint:revive // introduced before linter
 type TriggerResponse struct {
 	ID          string                     `json:"id,omitempty"`
 	CreatedAt   string                     `json:"created_at,omitempty"`
@@ -36,6 +37,10 @@ type TriggerResponse struct {
 // nolint:revive // introduced before linter
 type TriggerItems struct {
 	Items []Trigger `json:"items"`
+}
+
+type TriggerResponseItems struct {
+	Items []TriggerResponse `json:"items"`
 }
 
 // nolint:revive // introduced before linter
@@ -57,14 +62,14 @@ func (s *TriggerService) Get(ctx context.Context, projectID, triggerID string) (
 	return &trigger, nil
 }
 
-func (s *TriggerService) List(ctx context.Context, projectID, pipelineID string) (_ []Trigger, err error) {
-	var triggerItems TriggerItems
-	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil, &triggerItems)
+func (s *TriggerService) List(ctx context.Context, projectID, pipelineID string) (_ []TriggerResponse, err error) {
+	var triggerResponseItems TriggerResponseItems
+	_, err = s.client.RequestHelper(ctx, http.MethodGet, fmt.Sprintf("/projects/%s/pipeline-definitions/%s/triggers", projectID, pipelineID), nil, &triggerResponseItems)
 	if err != nil {
 		return nil, err
 	}
 
-	return triggerItems.Items, nil
+	return triggerResponseItems.Items, nil
 }
 
 func (s *TriggerService) Create(ctx context.Context, newTrigger Trigger, projectID, pipelineID string) (_ *TriggerResponse, err error) {
