@@ -24,10 +24,32 @@ type CheckoutSource struct {
 	Repo     Repo   `json:"repo,omitzero"`
 }
 
+type Schedule struct {
+	CronExpression   string `json:"cron_expression"`
+	AttributionActor string `json:"attribution_actor"`
+}
+
+type ScheduleResponse struct {
+	CronExpression   string                   `json:"cron_expression"`
+	AttributionActor AttributionActorResponse `json:"attribution_actor"`
+}
+
+type AttributionActorResponse struct {
+	Id string `json:"id"`
+}
+
 type EventSource struct {
+	Provider string   `json:"provider,omitempty"`
+	Repo     Repo     `json:"repo,omitzero"`
+	Webhook  Webhook  `json:"webhook,omitzero"`
+	Schedule Schedule `json:"schedule,omitzero"`
+}
+
+type EventSourceResponse struct {
 	Provider string  `json:"provider,omitempty"`
 	Repo     Repo    `json:"repo,omitzero"`
 	Webhook  Webhook `json:"webhook,omitzero"`
+	//Schedule ScheduleResponse `json:"schedule,omitzero"`
 }
 
 type PaginatedResponse[T any] struct {
