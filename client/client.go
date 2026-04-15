@@ -92,7 +92,6 @@ func (c *Client) request(ctx context.Context, url, method string, body, respBody
 		}
 
 		// Pass the byte slice to Unmarshal instead of the Reader to Decoder
-		fmt.Printf("respBody type : %T\n", respBody)
 		if err := json.Unmarshal(b, respBody); err != nil {
 			return nil, errors.Wrapf(err, "error decoding response body: %s", string(b))
 		}
