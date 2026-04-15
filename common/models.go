@@ -46,10 +46,10 @@ type EventSource struct {
 }
 
 type EventSourceResponse struct {
-	Provider string  `json:"provider,omitempty"`
-	Repo     Repo    `json:"repo,omitzero"`
-	Webhook  Webhook `json:"webhook,omitzero"`
-	//Schedule ScheduleResponse `json:"schedule,omitzero"`
+	Provider string           `json:"provider,omitempty"`
+	Repo     Repo             `json:"repo,omitzero"`
+	Webhook  Webhook          `json:"webhook,omitzero"`
+	Schedule ScheduleResponse `json:"schedule,omitzero"`
 }
 
 type PaginatedResponse[T any] struct {

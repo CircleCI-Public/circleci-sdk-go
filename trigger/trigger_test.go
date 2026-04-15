@@ -58,13 +58,13 @@ func TestFullTriggerNew(t *testing.T) {
 	assert.Assert(t, err)
 	assert.Check(t, cmp.Equal(triggerUpdated.EventName, "New event name"))
 
-	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
+	_, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
 	err = triggerService.Delete(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
 }
@@ -99,13 +99,13 @@ func TestFullTrigger(t *testing.T) {
 	_, err = triggerService.Update(ctx, triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
+	_, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
 	err = triggerService.Delete(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
 }
@@ -145,13 +145,13 @@ func TestFullScheduledTrigger(t *testing.T) {
 	_, err = triggerService.Update(ctx, triggerToUpdate, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
+	_, err = triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
 	err = triggerService.Delete(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err)
 
-	triggerFetched, err = triggerService.Get(ctx, projectID, idNewTrigger)
+	triggerFetched, err := triggerService.Get(ctx, projectID, idNewTrigger)
 	assert.Assert(t, err != nil)
 	assert.Check(t, cmp.Nil(triggerFetched))
 }
