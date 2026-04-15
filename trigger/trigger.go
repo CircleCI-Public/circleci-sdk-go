@@ -39,6 +39,7 @@ type TriggerItems struct {
 	Items []Trigger `json:"items"`
 }
 
+// nolint:revive // introduced before linter
 type TriggerResponseItems struct {
 	Items []TriggerResponse `json:"items"`
 }
