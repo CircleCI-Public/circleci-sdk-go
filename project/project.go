@@ -70,14 +70,9 @@ func (s *ProjectService) Create(ctx context.Context, projectName, organizationID
 
 	slug := strings.Split(project.Slug, "/")
 	if len(slug) == 3 && slug[1] == project.OrganizationName {
-		// TODO: The URL here probably need to be used in a different way depending on how on premise works
-		var user common.User
-		_, err = s.client.RequestHelperAbsolute(ctx, http.MethodGet, "https://circleci.com/api/v1.1/me", nil, &user)
-		if err != nil {
-			return nil, err
-		}
-		// TODO: The URL here probably need to be used in a different way depending on how on premise works
-		url := fmt.Sprintf("https://circleci.com/api/v1.1/project/%s/%s/%s/follow", strings.ToLower(project.VcsInfo.Provider), user.Login, project.Name)
+		orgName := slug[1]
+		// TODO: The URL here probably needs to be derived from the configured host for on-premise support
+		url := fmt.Sprintf("https://circleci.com/api/v1.1/project/%s/%s/%s/follow", strings.ToLower(project.VcsInfo.Provider), orgName, project.Name)
 		_, err = s.client.RequestHelperAbsolute(ctx, http.MethodPost, url, nil, nil)
 		if err != nil {
 			return nil, err
