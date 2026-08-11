@@ -18,7 +18,7 @@ type Trigger struct {
 	EventName   string             `json:"event_name,omitempty"`
 	EventPreset string             `json:"event_preset,omitempty"`
 	Disabled    *bool              `json:"disabled,omitempty"`
-	Parameters  map[string]string  `json:"parameters,omitempty"`
+	Parameters  map[string]any     `json:"parameters,omitempty"`
 }
 
 // nolint:revive // introduced before linter
@@ -31,7 +31,7 @@ type TriggerResponse struct {
 	EventName   string                     `json:"event_name,omitempty"`
 	EventPreset string                     `json:"event_preset,omitempty"`
 	Disabled    *bool                      `json:"disabled,omitempty"`
-	Parameters  map[string]string          `json:"parameters,omitempty"`
+	Parameters  map[string]any             `json:"parameters,omitempty"`
 }
 
 // nolint:revive // introduced before linter
