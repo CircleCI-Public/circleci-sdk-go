@@ -132,7 +132,7 @@ func TestFullScheduledTrigger(t *testing.T) {
 		ConfigRef:   "main",
 		CheckoutRef: "main",
 		Disabled:    common.Bool(false),
-		Parameters:  map[string]string{"name": "david"},
+		Parameters:  map[string]any{"name": "david", "run_tests": true, "retries": 3},
 	}
 	triggerCreated, err := triggerService.Create(ctx, newTrigger, projectID, pipelineID)
 	assert.Assert(t, err)
